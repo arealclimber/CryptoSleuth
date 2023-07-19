@@ -53,7 +53,7 @@ func getAssetTransfers(c *gin.Context) {
 	}
 	jsonValue, _ := json.Marshal(requestBody)
 
-	resp, err := http.Post("https://eth-mainnet.g.alchemy.com/v2/IGTt_x-jXJKnPx9rVsRHmr0i30_UgsGD", "application/json", bytes.NewBuffer(jsonValue))
+	resp, err := http.Post("https://eth-mainnet.g.alchemy.com/v2/key", "application/json", bytes.NewBuffer(jsonValue))
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
