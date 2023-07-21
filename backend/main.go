@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"sleuth/di"
-	model_com "sleuth/models/commons"
+	"sleuth/infras/flags"
 )
 
 var (
@@ -22,15 +22,8 @@ var (
 )
 
 func main() {
-	info := &model_com.SystemInfo{
-		Version:   version,
-		BuildNum:  buildNum,
-		Branch:    branch,
-		Commit:    commit,
-		BuildUser: user,
-		BuildTime: buildTime,
-	}
-
+	info := flags.LoadFlag()
+	log.Printf("info: %v", info)
 	if server, err := di.CreateServer(context.Background(), info); err != nil {
 		fmt.Fprintf(os.Stderr, "Error during dependency injection: %v", err)
 		os.Exit(1)

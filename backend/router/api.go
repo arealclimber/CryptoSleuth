@@ -14,6 +14,10 @@ func (router *Router) ping(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "pong"})
 }
 
+func (router *Router) version(c *gin.Context) {
+	c.JSON(200, router.infra.Info)
+}
+
 func (router *Router) getAssetTransfers(c *gin.Context) {
 	address := c.Query("address")
 	if address == "" {

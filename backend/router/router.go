@@ -25,6 +25,7 @@ func (router *Router) InitRouter() *gin.Engine {
 
 	api := r.Group("/")
 	api.GET("/ping", router.ping)
+	api.GET("/version", router.version)
 	api.GET("/wallet/transaction/history", router.getAssetTransfers)
 
 	return r
