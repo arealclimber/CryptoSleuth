@@ -4,11 +4,28 @@ import Ball from '../components/Ball';
 import {wait} from '../utils/common';
 
 const API = `/api/wallet/transactions/history`;
+enum MOVE_TO {
+	RIGHT = 'translate-x-[200px]',
+	RIGHT_TOP = 'translate-x-[200px] -translate-y-[200px]',
+	RIGHT_DOWN = 'translate-x-[200px] translate-y-[200px]',
+	LEFT = '-translate-x-[200px]',
+	LEFT_TOP = '-translate-x-[200px] -translate-y-[200px]',
+	TOP = '-translate-y-[200px]',
+	BOTTOM = 'translate-y-[200px]',
+	STILL = 'bg-gray-200',
+}
 
 export default function Home() {
 	const [walletAddress, setWalletAddress] = useState<string>('');
 	const [data, setData] = useState<ITransactionHistory | undefined>(undefined);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [changed1, setChanged1] = useState<boolean>(false);
+	const [changed2, setChanged2] = useState<boolean>(false);
+	const [changed3, setChanged3] = useState<boolean>(false);
+	const [changed4, setChanged4] = useState<boolean>(false);
+	const [changed5, setChanged5] = useState<boolean>(false);
+
+	const [disable1, setDisable1] = useState<boolean>(false);
 
 	const requestHandler = async (walletAddress: string) => {
 		setLoading(true);
@@ -35,6 +52,28 @@ export default function Home() {
 	const btnClickHandler = async () => {
 		await requestHandler(walletAddress.toLowerCase());
 	};
+
+	const ballClickHandlersRouter = () => {
+		return {
+			ball1: () => {
+				setChanged1(!changed1);
+			},
+			ball2: () => {
+				setChanged2(!changed2);
+			},
+			ball3: () => {
+				setChanged3(!changed3);
+			},
+			ball4: () => {
+				setChanged4(!changed4);
+			},
+			ball5: () => {
+				setChanged5(!changed5);
+			},
+		};
+	};
+
+	const ballClickHandlers = ballClickHandlersRouter();
 
 	return (
 		<main className={`flex min-h-screen flex-col items-center justify-between p-24`}>
@@ -78,7 +117,43 @@ export default function Home() {
 						)}
 					</button>
 				</div>
-
+				<div className="w-full mt-10">
+					<Ball
+						changeTo={MOVE_TO.STILL}
+						locate={`mx-auto`}
+						changed={changed5}
+						clickHandler={ballClickHandlers.ball5}
+						size="w-96 h-96 z-10"
+					/>{' '}
+					<Ball
+						changeTo={MOVE_TO.LEFT_TOP}
+						locate={`absolute top-[530px] right-[300px]`}
+						changed={changed1}
+						clickHandler={ballClickHandlers.ball1}
+						style="z-20"
+					/>
+					<Ball
+						changeTo={MOVE_TO.RIGHT_TOP}
+						locate={`absolute top-[500px] left-[250px]`}
+						changed={changed2}
+						clickHandler={ballClickHandlers.ball2}
+						style="z-10"
+					/>
+					<Ball
+						changeTo={MOVE_TO.RIGHT_DOWN}
+						locate={`absolute top-[250px] left-[300px]`}
+						changed={changed3}
+						clickHandler={ballClickHandlers.ball3}
+						style="z-10"
+					/>
+					<Ball
+						changeTo={MOVE_TO.LEFT}
+						locate={`absolute top-[300px] right-[250px]`}
+						changed={changed4}
+						clickHandler={ballClickHandlers.ball4}
+						style="z-10"
+					/>
+				</div>
 				<div className="mt-10 text-lg">
 					{!loading && data ? (
 						<>
@@ -102,7 +177,7 @@ export default function Home() {
 												<p className="">To: {t.to} </p>
 												<p className="">Value: {t.value}</p>
 											</div>
-											<div className=""> {/* <Ball content={t.value} /> */}</div>
+											<div className=""> </div>
 										</div>
 									);
 								})}

@@ -1,21 +1,35 @@
-import {motion} from 'framer-motion';
+import {useState} from 'react';
 
-const Ball = ({content}: {content: string | number}) => {
+interface IBallProps {
+	changed: boolean;
+	changeTo: string;
+	clickHandler: () => void;
+	locate: string;
+	size?: string;
+	style?: string;
+}
+
+const Ball = ({
+	changed,
+	clickHandler,
+	locate,
+	changeTo,
+	size,
+	style,
+}: IBallProps) => {
 	return (
-		<motion.div
-			className="w-16 h-16 bg-blue-500 rounded-full hover:cursor-pointer flex justify-center items-center"
-			whileTap={{scale: 10}}
-			animate={{y: ['100%', '-100%', '100%']}}
-			transition={{
-				duration: 0.6,
-				ease: 'easeInOut',
-				times: [0, 0.5, 1],
-				loop: Infinity,
-				repeatDelay: 1,
-			}}
-		>
-			{content}
-		</motion.div>
+		// <div
+		// 	className={`w-20 h-20 rounded-full bg-white ${locate} ${move ? moveTo : ''}`}
+		// >
+		<div
+			className={`${style} ${locate} ${
+				changed ? `${changeTo} bg-blue` : 'bg-gray'
+			} ${
+				size ? size : `w-44 h-44`
+			} rounded-full opacity-100 cursor-pointer duration-500 shadow-2xl`}
+			onClick={clickHandler}
+		/>
+		// </div>
 	);
 };
 
