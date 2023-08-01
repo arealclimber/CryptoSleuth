@@ -21,4 +21,7 @@ logger:
 alchemy:
   token: key
 
+etherscan:
+  token: key
+
 

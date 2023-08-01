@@ -11,9 +11,10 @@ import (
 // region structure
 // App config struct
 type Config struct {
-	Server  ServerConfig
-	Logger  Logger
-	Alchemy AlchemyConfig
+	Server    ServerConfig
+	Logger    Logger
+	Alchemy   AlchemyConfig
+	Etherscan EtherscanConfig
 }
 
 // Server config struct
@@ -41,6 +42,9 @@ type Logger struct {
 }
 
 type AlchemyConfig struct {
+	Token string
+}
+type EtherscanConfig struct {
 	Token string
 }
 
