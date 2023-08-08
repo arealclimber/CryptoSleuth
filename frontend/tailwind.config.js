@@ -33,6 +33,7 @@ module.exports = {
 				mPlus: ['M PLUS Rounded 1c', 'sans-serif'],
 				barlow: ['Barlow', 'sans-serif', 'ui-sans-serif', 'system-ui'],
 				nunito: ['Nunito', 'sans-serif'],
+				roboto: ['Roboto', 'sans-serif'],
 			},
 			colors: {
 				primary: {
@@ -48,8 +49,8 @@ module.exports = {
 					50: '#FFFFFF',
 				},
 				gray: {
-					DEFAULT: '#6c7782',
-					50: '#FFFFFF',
+					DEFAULT: '#F0F0F0',
+					50: '#979797',
 				},
 				blue: {
 					DEFAULT: '#89bdf5',
@@ -58,5 +59,5 @@ module.exports = {
 		},
 	},
 	plugins: [],
-	darkMode: 'class',
+	// darkMode: 'class',
 };
