@@ -164,7 +164,7 @@ export default function Trial() {
 							</div>
 
 							<div className="mt-10 flex flex-col text-lg space-y-10">
-								{data.transactions.map((t, index) => {
+								{/* {data.transactions.map((t, index) => {
 									return (
 										<div
 											key={t.txhash}
@@ -180,7 +180,7 @@ export default function Trial() {
 											<div className=""> </div>
 										</div>
 									);
-								})}
+								})} */}
 							</div>
 						</>
 					) : null}
