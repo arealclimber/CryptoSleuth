@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {ITransaction, ITransactionHistory} from '../interfaces/transactions';
 import Ball from '../components/Ball';
 import {wait} from '../utils/common';
+import useGlobalStore from '../store/basic';
 
 const API = `/api/wallet/transactions/history`;
 enum MOVE_TO {
@@ -16,6 +17,8 @@ enum MOVE_TO {
 }
 
 export default function Trial() {
+	const wallet = useGlobalStore(state => state.wallet);
+
 	const [walletAddress, setWalletAddress] = useState<string>('');
 	const [data, setData] = useState<ITransactionHistory | undefined>(undefined);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -79,6 +82,7 @@ export default function Trial() {
 		<main className={`flex min-h-screen flex-col items-center justify-between p-24`}>
 			<div className="z-10 w-full max-w-5xl items-center justify-between text-sm flex-col">
 				<h1 className="text-5xl">Crypto Sleuth</h1>
+				<p className=""> wallet from Zustand: {wallet}</p>
 				<div className="mt-10 flex space-x-10">
 					<input
 						value={walletAddress}

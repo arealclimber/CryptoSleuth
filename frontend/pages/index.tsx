@@ -10,8 +10,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, {useRef, useState} from 'react';
 import {ITransaction} from '../interfaces/transactions';
+import useGlobalStore from '../store/basic';
 
 const Home = () => {
+	const [wallet, setWallet] = useGlobalStore(state => [
+		state.wallet,
+		state.setWallet,
+	]);
+
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [targetAddress, setTargetAddress] = useState<string>('');
 	const [walletHistories, setWalletHistories] = useState(Array<ITransaction>);
@@ -39,6 +45,9 @@ const Home = () => {
 			if (data?.message === 'OK') {
 				setTargetAddress(inputRef.current.value);
 				setWalletHistories(data.result);
+
+				setWallet(inputRef.current.value);
+				console.log('wallet from Zustand in index', wallet);
 			} else {
 				setTargetAddress(inputRef.current.value);
 				setWalletHistories([]);
@@ -53,7 +62,7 @@ const Home = () => {
 	return (
 		<div className="">
 			<div className="py-5 px-10 w-[500px]">
-				<Link href="/">
+				<Link href="/trial">
 					<Image
 						className="hover:opacity-80 transition-all duration-300"
 						src="/elements/crypto_sleuth.svg"
@@ -146,7 +155,10 @@ const Home = () => {
 				>
 					<div className="text-[32px] font-bold">iven.eth</div>
 					<div className="flex space-x-3">
-						<div className="">{targetAddress}</div>
+						<div className="">
+							{wallet}
+							{/* {targetAddress} */}
+						</div>
 						<div className="">
 							<Image
 								className="hover:cursor-pointer"
