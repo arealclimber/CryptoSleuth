@@ -22,6 +22,7 @@ func NewRouter(opts *infras.Options) *Router {
 
 func (router *Router) InitRouter() *gin.Engine {
 	r := gin.Default()
+	r.Use(corsMiddleware()) // 使用 CORS 中間件
 
 	api := r.Group("/")
 	api.GET("/ping", router.ping)
