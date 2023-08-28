@@ -17,12 +17,23 @@ module.exports = {
 				// '2xl': '6rem',
 			},
 		},
+		padding: {
+			DEFAULT: '1rem',
+			sm: '2rem',
+			lg: '4rem',
+			xl: '5rem',
+			'2xl': '6rem',
+		},
+		spacing: {},
 		extend: {
-			backgroundImage: {
-				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'gradient-conic':
-					'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+			boxShadow: {
+				'innerCustom': '0px 0px 20px 0px rgba(0, 0, 0, 0.15) inset',
 			},
+			ringColor: {},
+			backgroundImage: theme => ({
+				'gradientRadial':
+					'linear-gradient(230deg, #4fa7ec 0%, #fcfeff 49.48%, #8fe3cf 100%)',
+			}),
 			keyframes: {
 				wiggle: {
 					'0%, 100%': {transform: 'rotate(-3deg)'},
@@ -64,6 +75,7 @@ module.exports = {
 				},
 				blue: {
 					DEFAULT: '#89bdf5',
+					50: '#BDDFF8',
 				},
 			},
 		},

@@ -62,7 +62,7 @@ const Home = () => {
 	return (
 		<div className="">
 			<div className="py-5 px-10 w-[500px]">
-				<Link href="/trial">
+				<Link href="#">
 					<Image
 						className="hover:opacity-80 transition-all duration-300"
 						src="/elements/crypto_sleuth.svg"
@@ -211,7 +211,7 @@ const Home = () => {
 			</div>
 			{/* ---Ball Section--- */}
 			<div className="container w-2/3 mt-40">
-				{walletHistories.map((history, index) => {
+				{walletHistories?.map((history, index) => {
 					return (
 						<div
 							key={index}
