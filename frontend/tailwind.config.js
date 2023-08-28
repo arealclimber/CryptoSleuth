@@ -9,15 +9,11 @@ module.exports = {
 	theme: {
 		container: {
 			center: true,
-			padding: {
-				// DEFAULT: '1rem',
-				// sm: '2rem',
-				// lg: '4rem',
-				// xl: '5rem',
-				// '2xl': '6rem',
-			},
 		},
 		extend: {
+			boxShadow: {
+				'innerCustom': '0px 0px 20px 0px rgba(0, 0, 0, 0.15) inset',
+			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic':
@@ -64,6 +60,7 @@ module.exports = {
 				},
 				blue: {
 					DEFAULT: '#89bdf5',
+					50: '#BDDFF8',
 				},
 			},
 		},
