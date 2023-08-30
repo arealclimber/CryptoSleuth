@@ -44,11 +44,12 @@ const Home = () => {
 		const data = await fetcher(`/api/proxy?address=${inputRef.current?.value}`);
 
 		// TODO: balance hasn't done yet
-		const balance = await fetch(
-			`http://54.199.12.7:8070/wallet/balance?address=${inputRef.current?.value}`
-		);
+		// FIXME: There's error calling http API request
+		// const balance = await fetch(
+		// 	`http://54.199.12.7:8070/wallet/balance?address=${inputRef.current?.value}`
+		// );
 
-		console.log('balance', balance);
+		// console.log('balance', balance);
 
 		// TODO: validate the address
 		if (inputRef.current?.value) {
