@@ -2,3 +2,9 @@
 	border-radius: 34.375rem;
 	background: linear-gradient(230deg, #4fa7ec 0%, #fcfeff 49.48%, #8fe3cf 100%);
 }
+
+.cashInBall {
+	border-radius: 21.875rem;
+	background: #fff;
+	box-shadow: 0px 0px 40px 0px #65d6bc;
+}

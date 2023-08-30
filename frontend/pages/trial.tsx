@@ -4,6 +4,8 @@ import Ball from '../components/Ball';
 import {wait} from '../utils/common';
 import useGlobalStore from '../store/basic';
 import CenterBall from '../components/CenterBall';
+import CashInBall from '../components/CashInBall';
+import CashOutBall from '../components/CashOutBall';
 
 const API = `/api/wallet/transactions/history`;
 enum MOVE_TO {
@@ -79,9 +81,25 @@ export default function Trial() {
 
 	const ballClickHandlers = ballClickHandlersRouter();
 
+	const w = 'w-[20.625rem]';
+	const h = 'h-[20.625rem]';
+
 	return (
 		<main className={``}>
-			<CenterBall />
+			<CashOutBall
+				w={w}
+				h={h}
+				title={`0123abcx`}
+				content="asljdfnlas"
+				remark="0.55 ETH / $19,463 "
+			/>
+			{/* <CashInBall
+				w={w}
+				h={h}
+				title={`0123abcx`}
+				content="asljdfnlas"
+				remark="0.55 ETH / $19,463 "
+			/> */}
 		</main>
 	);
 }
