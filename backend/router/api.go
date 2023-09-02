@@ -1,14 +1,17 @@
 package router
 
 import (
+	"container/heap"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	m "sleuth/models/router"
+	"sleuth/utils"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +28,7 @@ func (router *Router) version(c *gin.Context) {
 func (router *Router) getAssetTransfers(c *gin.Context) {
 	address := c.Query("address")
 	tr := c.DefaultQuery("time_range", "60")
+	reqType := c.DefaultQuery("type", "amount") // amount or frequency
 	timeRange, err := strconv.Atoi(tr)
 
 	if address == "" {
@@ -63,8 +67,16 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 	}
 
 	transactionsWithinRange := filterTransactionsWithinTimeRange(rsp, timeRange)
-	TopFiveTransactionsByAmount := findTopFiveTransactionsByAmount(transactionsWithinRange)
-	rsp.Result = TopFiveTransactionsByAmount
+	if reqType == "frequency" {
+		TopFiveTransactionsByFrequency := findTopFiveTransactionsByFrequency(address, transactionsWithinRange)
+		rsp.Type = "frequency"
+		rsp.Result = TopFiveTransactionsByFrequency
+	}
+	if reqType == "amount" {
+		TopFiveTransactionsByAmount := findTopFiveTransactionsByAmount(transactionsWithinRange)
+		rsp.Type = "amount"
+		rsp.Result = TopFiveTransactionsByAmount
+	}
 
 	c.JSON(http.StatusOK, rsp)
 }
@@ -146,6 +158,40 @@ func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.Transacti
 	var target []m.Transaction
 	for i := 0; i < len(transactions) && i < 5; i++ {
 		target = append(target, transactions[i])
+	}
+
+	return target
+}
+
+func findTopFiveTransactionsByFrequency(address string, transactions []m.Transaction) []m.Transaction {
+	mapTransactions := make(map[string]int)
+	lastTransactionByTo := make(map[string]m.Transaction)
+	var topFive utils.MinHeap
+	heap.Init(&topFive)
+
+	for _, v := range transactions {
+		if strings.ToUpper(v.From) == strings.ToUpper(address) {
+			mapTransactions[v.To]++
+			count := mapTransactions[v.To]
+			v.Frequency = &count
+			lastTransactionByTo[v.To] = v
+		}
+	}
+
+	for key, value := range mapTransactions {
+		if topFive.Len() < 5 {
+			heap.Push(&topFive, utils.Pair{To: key, Count: value})
+		} else if topFive[0].Count < value {
+			heap.Pop(&topFive)
+			heap.Push(&topFive, utils.Pair{To: key, Count: value})
+		}
+	}
+
+	var target []m.Transaction
+	for _, pair := range topFive {
+		if transaction, exists := lastTransactionByTo[pair.To]; exists {
+			target = append(target, transaction)
+		}
 	}
 
 	return target
