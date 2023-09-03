@@ -86,13 +86,16 @@ export default function Trial() {
 
 	return (
 		<main className={``}>
-			<CashOutBall
+			{/* 轉出的球 */}
+			{/* <CashOutBall
 				w={w}
 				h={h}
 				title={`0123abcx`}
 				content="asljdfnlas"
 				remark="0.55 ETH / $19,463 "
-			/>
+			/> */}
+
+			{/* 轉入的球 */}
 			{/* <CashInBall
 				w={w}
 				h={h}

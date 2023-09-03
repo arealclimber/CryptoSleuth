@@ -1,9 +1,14 @@
 /**
  * TODO:
- * 0. Layout: Ball, History
- * 1. Scroll bar decoration
- * 2. Call API and render data (Wallet balance, History)
- * 3. Wrap the result of API in Zustand
+ * 拿 filter dropdown 來 call API
+ * 重構 API calling client
+ * 轉入轉出球的文字排版
+ * 轉入轉出球的計算大小
+ * 轉入轉出球的在頁面上的排版
+ * 轉入轉出球移動的動畫
+ * 轉入轉出球的 hover 效果
+ * Search History 的功能
+ * Search History 的排版
  *
  */
 import Image from 'next/image';
