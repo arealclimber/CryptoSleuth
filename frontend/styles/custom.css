@@ -8,3 +8,11 @@
 	background: #fff;
 	box-shadow: 0px 0px 40px 0px #65d6bc;
 }
+
+.cashOutBallHoverBg {
+	background: linear-gradient(321deg, #bddff8 13.4%, #fff 83.93%);
+}
+
+.cashInBallHoverBg {
+	background: linear-gradient(139deg, #a8f4e2 14.04%, #fff 84.14%);
+}

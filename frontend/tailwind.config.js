@@ -50,6 +50,7 @@ module.exports = {
 				'innerCustom': '0px 0px 20px 0px rgba(0, 0, 0, 0.15) inset',
 				'cashInGreen': '0px 0px 40px 0px #65D6BC',
 				'cashOutBlue': '0px 4px 20px 0px #94CBF4',
+				'cashBallHover': '0px 4px 25px rgba(0, 0, 0, 0.20)',
 			},
 			borderRadius: {
 				'21xl': '21.875rem',

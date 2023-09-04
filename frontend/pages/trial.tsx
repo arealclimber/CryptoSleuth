@@ -81,28 +81,31 @@ export default function Trial() {
 
 	const ballClickHandlers = ballClickHandlersRouter();
 
+	// const w = 'w-[12.5rem]';
+	// const h = 'h-[12.5rem]';
+
 	const w = 'w-[20.625rem]';
 	const h = 'h-[20.625rem]';
 
 	return (
 		<main className={``}>
 			{/* 轉出的球 */}
-			{/* <CashOutBall
+			<CashOutBall
 				w={w}
 				h={h}
 				title={`0123abcx`}
 				content="asljdfnlas"
 				remark="0.55 ETH / $19,463 "
-			/> */}
+			/>
 
 			{/* 轉入的球 */}
-			{/* <CashInBall
+			<CashInBall
 				w={w}
 				h={h}
 				title={`0123abcx`}
 				content="asljdfnlas"
 				remark="0.55 ETH / $19,463 "
-			/> */}
+			/>
 		</main>
 	);
 }
