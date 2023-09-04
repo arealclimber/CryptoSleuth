@@ -88,7 +88,7 @@ export default function Trial() {
 	const h = 'h-[20.625rem]';
 
 	return (
-		<main className={``}>
+		<main className={`flex flex-col space-y-10 justify-center items-center`}>
 			{/* 轉出的球 */}
 			<CashOutBall
 				w={w}
