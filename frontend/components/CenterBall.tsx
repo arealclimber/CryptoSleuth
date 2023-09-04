@@ -18,7 +18,7 @@ const CenterBall = ({text}: ICenterBall) => {
 			{/* <div className="flex items-center justify-center h-screen"> */}
 			{/* 藍色的環，留 p-2 可以確保畫面縮小時，環不會內縮變成橢圓環 */}
 			<div
-				className={`flex items-center justify-center ${w} ${h} ring-2 ring-blue-50 rounded-full p-2`}
+				className={`flex items-center justify-center ${w} ${h} ring-[5px] ring-blue-50 rounded-full p-2`}
 			>
 				{/* 漸層色的環 */}
 				<div className="flex items-center justify-center centerBall rounded-full w-[35rem] h-[35rem]">

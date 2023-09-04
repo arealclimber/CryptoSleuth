@@ -10,6 +10,8 @@
  * Search History 的功能
  * Search History 的排版
  * Ball details modal
+ * useOuterClick
+ * Toast
  *
  */
 import Image from 'next/image';
@@ -255,7 +257,7 @@ const Home = () => {
 			<div className=""></div>
 
 			{/* Footer */}
-			{/* <div className="bg-gray-700 h-[600px] mt-40"></div> */}
+			{/* <div className="bg-[#C1C1C1] h-[600px] mt-40"></div> */}
 		</div>
 	);
 };
