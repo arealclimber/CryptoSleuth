@@ -22,6 +22,7 @@ import useGlobalStore from '../store/basic';
 import CenterBall from '../components/CenterBall';
 import {API_URL} from '../config/api';
 import Dropdown from '../components/Dropdown';
+import InfoModal from '../components/InfoModal';
 
 const Home = () => {
 	const [wallet, setWallet, balance] = useGlobalStore(state => [
@@ -33,6 +34,12 @@ const Home = () => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [walletHistories, setWalletHistories] = useState(Array<ITransaction>);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [visible, setVisible] = useState(false);
+
+	const btnClickHandler = () => {
+		setVisible(false);
+	};
+
 	// TODO: get the balance of targeted address
 
 	const fetcher = async (...args: Parameters<typeof fetch>): Promise<any> => {
@@ -48,6 +55,7 @@ const Home = () => {
 
 	const searchClickHandler = async () => {
 		setLoading(true);
+		setVisible(true);
 
 		const data = await fetcher(`/api/proxy?address=${inputRef.current?.value}`);
 
@@ -88,6 +96,8 @@ const Home = () => {
 					/>
 				</Link>
 			</div>
+
+			<InfoModal visible={visible} btnClickHandler={btnClickHandler} />
 
 			<div className="w-full h-[400px] bg-[url('/elements/banner.svg')]">
 				<div className="flex flex-col justify-start space-y-6 items-center bg-cover bg-center container">

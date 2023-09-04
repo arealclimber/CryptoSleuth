@@ -13,7 +13,7 @@ module.exports = {
 				DEFAULT: '0',
 			},
 			padding: {
-				DEFAULT: '156px',
+				DEFAULT: '9.75rem',
 				// sm: '156px',
 				// md: '156px',
 				// lg: '156px',
@@ -98,6 +98,7 @@ module.exports = {
 				},
 				gray: {
 					DEFAULT: '#F0F0F0',
+					10: '#C2C2C2',
 					50: '#979797',
 					150: '#E4F2FC',
 					250: '#F5F5F5',
