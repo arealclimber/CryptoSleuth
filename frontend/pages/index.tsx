@@ -23,6 +23,7 @@ import CenterBall from '../components/CenterBall';
 import {API_URL} from '../config/api';
 import Dropdown from '../components/Dropdown';
 import InfoModal from '../components/InfoModal';
+import Toast from '../components/Toast';
 
 const Home = () => {
 	const [wallet, setWallet, balance] = useGlobalStore(state => [
@@ -97,7 +98,8 @@ const Home = () => {
 				</Link>
 			</div>
 
-			<InfoModal visible={visible} btnClickHandler={btnClickHandler} />
+			{/* <InfoModal visible={visible} btnClickHandler={btnClickHandler} /> */}
+			<Toast visible={visible} btnClickHandler={btnClickHandler} />
 
 			<div className="w-full h-[400px] bg-[url('/elements/banner.svg')]">
 				<div className="flex flex-col justify-start space-y-6 items-center bg-cover bg-center container">

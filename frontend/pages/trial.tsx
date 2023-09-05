@@ -7,6 +7,7 @@ import CenterBall from '../components/CenterBall';
 import CashInBall from '../components/CashInBall';
 import CashOutBall from '../components/CashOutBall';
 import InfoModal from '../components/InfoModal';
+import Toast from '../components/Toast';
 
 const API = `/api/wallet/transactions/history`;
 enum MOVE_TO {
@@ -36,7 +37,8 @@ export default function Trial() {
 
 	return (
 		<main className={``}>
-			<InfoModal visible={visible} btnClickHandler={btnClickHandler} />
+			{/* <InfoModal visible={visible} btnClickHandler={btnClickHandler} /> */}
+			<Toast visible={visible} btnClickHandler={btnClickHandler} />
 			{/* 轉出的球 */}
 			{/* <CashOutBall
 				w={w}
