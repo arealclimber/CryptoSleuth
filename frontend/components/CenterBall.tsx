@@ -24,7 +24,7 @@ const CenterBall = ({text}: ICenterBall) => {
 				<div className="flex items-center justify-center centerBall rounded-full w-[35rem] h-[35rem]">
 					<div className="flex items-center justify-center">
 						{/* 白色內圓 */}
-						<span className="flex items-center justify-center shadow-innerCustom bg-white rounded-full w-[28rem] h-[28rem] z-10">
+						<span className="flex items-center justify-center shadow-innerCustom bg-white rounded-full w-[28rem] h-[28rem] z-0">
 							{text}
 						</span>
 					</div>

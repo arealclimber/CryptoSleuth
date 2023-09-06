@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import InfoModal from './InfoModal';
 
 interface ICashOutBall {
 	w: string;
@@ -13,6 +14,8 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 	const [hoveredBall, setHoveredBall] = useState(false);
 	const [hoveredMagnifier, setHoveredMagnifier] = useState(false);
 	const [hoveredEye, setHoveredEye] = useState(false);
+
+	const [visible, setVisible] = useState(false);
 
 	const handleMouseOver = () => {
 		setHoveredBall(true);
@@ -38,6 +41,10 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 		setHoveredEye(false);
 	};
 
+	const btnClickHandler = () => {
+		setVisible(prev => !visible);
+	};
+
 	const handler = {
 		mouseOnBall: handleMouseOver,
 		mouseOutBall: handleMouseOut,
@@ -49,8 +56,10 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 
 	return (
 		<div className={``}>
+			<InfoModal visible={visible} btnClickHandler={btnClickHandler} />
+
 			<div
-				className={`${w} ${h} rounded-full ${
+				className={`z-30 ${w} ${h} rounded-full ${
 					hoveredBall
 						? `cashOutBallHoverBg cursor-pointer shadow-cashBallHover`
 						: `bg-white shadow-cashOutBlue`
@@ -84,6 +93,7 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 										<div
 											onMouseEnter={handler.mouseOnEye}
 											onMouseLeave={handler.mouseOutEye}
+											onClick={btnClickHandler}
 											className={`${
 												hoveredEye ? `bg-[#6CB6EF]` : ``
 											} flex justify-center items-center w-[56px] h-[56px] rounded-full border-2 border-[#6CB6EF]`}
@@ -140,7 +150,7 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 										</div>
 									</div>
 								) : (
-									<div>
+									<div className="flex flex-col justify-center items-center">
 										<p className="">{title}</p>
 										<p className="">{content}</p>
 										<p className="">{remark}</p>

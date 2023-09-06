@@ -24,6 +24,11 @@ import {API_URL} from '../config/api';
 import Dropdown from '../components/Dropdown';
 import InfoModal from '../components/InfoModal';
 import Toast from '../components/Toast';
+import CashOutBall from '../components/CashOutBall';
+import CashInBall from '../components/CashInBall';
+
+const w = 'w-[20.625rem]';
+const h = 'h-[20.625rem]';
 
 const Home = () => {
 	const [wallet, setWallet, balance] = useGlobalStore(state => [
@@ -42,7 +47,6 @@ const Home = () => {
 	};
 
 	// TODO: get the balance of targeted address
-
 	const fetcher = async (...args: Parameters<typeof fetch>): Promise<any> => {
 		const res = await fetch(...args)
 			.then(res => res.json())
@@ -225,8 +229,37 @@ const Home = () => {
 			{/* ---Card--- */}
 
 			{/* ---Ball Section--- */}
-			<div className="flex justify-center mt-16 w-full">
-				{wallet ? <CenterBall text={wallet} /> : null}
+			<div className="mt-16 container">
+				{wallet ? (
+					<div className="flex justify-center">
+						{/* 轉出的球 */}
+						<div className="-mr-[10rem]">
+							<CashOutBall
+								w={w}
+								h={h}
+								title={`0123abcx`}
+								content="asljdfnlas"
+								remark="0.55 ETH / $19,463 "
+							/>
+						</div>
+
+						<div className="mt-[12rem] w-[31.25rem]">
+							{' '}
+							<CenterBall text={wallet} />
+						</div>
+
+						{/* 轉入的球 */}
+						<div className="ml-[4rem] mt-[20rem]">
+							<CashInBall
+								w={w}
+								h={h}
+								title={`0123abcx`}
+								content="asljdfnlas"
+								remark="0.55 ETH / $19,463 "
+							/>
+						</div>
+					</div>
+				) : null}
 				{/* {walletHistories.map((history, index) => {
 					return (
 						<div

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import InfoModal from './InfoModal';
 
 interface ICashInBall {
 	w: string;
@@ -14,6 +15,8 @@ const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
 	const [hoveredBall, setHoveredBall] = useState(false);
 	const [hoveredMagnifier, setHoveredMagnifier] = useState(false);
 	const [hoveredEye, setHoveredEye] = useState(false);
+
+	const [visible, setVisible] = useState(false);
 
 	const handleMouseOver = () => {
 		setHoveredBall(true);
@@ -39,6 +42,10 @@ const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
 		setHoveredEye(false);
 	};
 
+	const btnClickHandler = () => {
+		setVisible(prev => !visible);
+	};
+
 	const handler = {
 		mouseOnBall: handleMouseOver,
 		mouseOutBall: handleMouseOut,
@@ -50,9 +57,9 @@ const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
 
 	return (
 		<div className={``}>
-			{/* 用 TailwindCSS 自定義寫出陰影 */}
+			<InfoModal visible={visible} btnClickHandler={btnClickHandler} />
 			<div
-				className={`${w} ${h} ${
+				className={`z-30 ${w} ${h} ${
 					hoveredBall
 						? `cashInBallHoverBg cursor-pointer shadow-cashBallHover`
 						: `bg-white shadow-cashInGreen`
@@ -66,6 +73,7 @@ const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
 						<div
 							onMouseEnter={handler.mouseOnEye}
 							onMouseLeave={handler.mouseOutEye}
+							onClick={btnClickHandler}
 							className={`${
 								hoveredEye ? `bg-[#4CCAAC]` : ``
 							} flex justify-center items-center w-[56px] h-[56px] rounded-full border-2 border-[#4CCAAC]`}
@@ -122,7 +130,7 @@ const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
 						</div>
 					</div>
 				) : (
-					<div>
+					<div className="flex flex-col justify-center items-center">
 						<p className="">{content}</p>
 						<p className="">{remark}</p>
 					</div>
