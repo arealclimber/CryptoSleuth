@@ -59,6 +59,7 @@ const Home = () => {
 	};
 
 	const searchClickHandler = async () => {
+		setWallet('');
 		setLoading(true);
 		setVisible(true);
 
@@ -103,7 +104,7 @@ const Home = () => {
 			</div>
 
 			{/* <InfoModal visible={visible} btnClickHandler={btnClickHandler} /> */}
-			<Toast visible={visible} btnClickHandler={btnClickHandler} />
+			{wallet && <Toast visible={visible} btnClickHandler={btnClickHandler} />}
 
 			<div className="w-full h-[400px] bg-[url('/elements/banner.svg')]">
 				<div className="flex flex-col justify-start space-y-6 items-center bg-cover bg-center container">
