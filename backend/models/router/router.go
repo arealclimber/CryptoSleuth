@@ -32,10 +32,22 @@ type BaseResp struct {
 
 type TransactionResponse struct {
 	BaseResp
-	Result []Transaction `json:"result"`
+	Result interface{} `json:"result"`
 }
 
 type BalanceResponse struct {
 	BaseResp
 	Result string `json:"result"`
+}
+
+type AmountResponse struct {
+	BaseResp
+	Result []AmountType `json:"result"`
+}
+
+type AmountType struct {
+	From           string   `json:"from"`
+	To             string   `json:"to"`
+	BlockHashArray []string `json:"block_hash_array"`
+	Value          string   `json:"value"`
 }

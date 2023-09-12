@@ -145,7 +145,7 @@ func filterTransactionsWithinTimeRange(transactions m.TransactionResponse, timeR
 	return target
 }
 
-func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.Transaction {
+func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.AmountType {
 	sort.Slice(transactions, func(i, j int) bool {
 		amountI, errI := strconv.ParseFloat(transactions[i].Value, 64)
 		amountJ, errJ := strconv.ParseFloat(transactions[j].Value, 64)
@@ -155,9 +155,32 @@ func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.Transacti
 		return amountI > amountJ
 	})
 
-	var target []m.Transaction
-	for i := 0; i < len(transactions) && i < 5; i++ {
-		target = append(target, transactions[i])
+	var target []m.AmountType
+	countMap := make(map[string]int)
+	recordMap := make(map[string][]string)
+
+	// 找出不重複錢包地址中交易前五大的錢包地址
+	for i, v := range transactions {
+		countMap[v.To]++
+		target[i].From = v.From
+		target[i].To = v.To
+		target[i].Value = v.Value
+		if len(countMap) == 5 {
+			break
+		}
+	}
+
+	// 紀錄相同錢包地址的所有BlockHash
+	for _, v := range transactions {
+		recordMap[v.To] = append(recordMap[v.To], v.BlockHash)
+	}
+
+	var count int = 0
+	for key, _ := range countMap {
+		if blockHashSlice, exists := recordMap[key]; exists {
+			target[count].BlockHashArray = blockHashSlice
+			count++
+		}
 	}
 
 	return target
