@@ -4,7 +4,6 @@ import (
 	"container/heap"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	m "sleuth/models/router"
@@ -30,6 +29,12 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 	tr := c.DefaultQuery("time_range", "60")
 	reqType := c.DefaultQuery("type", "amount") // amount or frequency
 	timeRange, err := strconv.Atoi(tr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Time range parameter must be a number",
+		})
+		return
+	}
 
 	if address == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -39,18 +44,12 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 	}
 	url := "https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&endblock=latest&page=1&offset=1000&sort=desc&apikey=" + router.infra.Config.Etherscan.Token
 
-	resp, err := http.Get(url)
+	body, err := utils.Request(router.infra.Config.Etherscan.Token, url)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
 		})
 		return
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("error: can't read response body: %s", err)
 	}
 
 	var rsp m.TransactionResponse
@@ -91,21 +90,49 @@ func (router *Router) getBalance(c *gin.Context) {
 	}
 	url := "https://api.etherscan.io/api?module=account&action=balance&address=" + address + "&tag=latest&apikey=" + router.infra.Config.Etherscan.Token
 
-	resp, err := http.Get(url)
+	body, err := utils.Request(router.infra.Config.Etherscan.Token, url)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
 		})
 		return
 	}
-	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	var rsp m.TransactionResponse
+	err = json.Unmarshal(body, &rsp)
 	if err != nil {
-		log.Printf("error: can't read response body: %s", err)
+		log.Printf("error: can't unmarshal JSON: %s", err)
 	}
 
-	var rsp m.BalanceResponse
+	if rsp.Message != "OK" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": fmt.Sprintf("error: %s", rsp.Message),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, rsp)
+}
+
+func (router *Router) getAssetTransferByTxhash(c *gin.Context) {
+	txhash := c.Query("txhash")
+	if txhash == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "txhash parameter is required",
+		})
+		return
+	}
+	url := "https://api.etherscan.io/api?module=account&action=txlistinternal&txhash=" + txhash + "&apikey=" + router.infra.Config.Etherscan.Token
+
+	body, err := utils.Request(router.infra.Config.Etherscan.Token, url)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
+		})
+		return
+	}
+
+	var rsp m.TransactionResponse
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
 		log.Printf("error: can't unmarshal JSON: %s", err)
@@ -127,7 +154,7 @@ func filterTransactionsWithinTimeRange(transactions m.TransactionResponse, timeR
 
 	now := time.Now().Unix()
 
-	for i, v := range transactions.Result {
+	for _, v := range transactions.Result.([]m.Transaction) {
 		timeStamp, err := strconv.ParseInt(v.TimeStamp, 10, 64)
 		if err == nil {
 			t := time.Unix(timeStamp, 0)
@@ -135,7 +162,7 @@ func filterTransactionsWithinTimeRange(transactions m.TransactionResponse, timeR
 			secondsDiff := now - t.Unix()
 
 			if secondsDiff <= int64(timeRange) {
-				target = append(target, transactions.Result[i])
+				target = append(target, v)
 			} else {
 				break
 			}
@@ -176,7 +203,7 @@ func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.AmountTyp
 	}
 
 	var count int = 0
-	for key, _ := range countMap {
+	for key := range countMap {
 		if blockHashSlice, exists := recordMap[key]; exists {
 			target[count].BlockHashArray = blockHashSlice
 			count++
@@ -193,7 +220,7 @@ func findTopFiveTransactionsByFrequency(address string, transactions []m.Transac
 	heap.Init(&topFive)
 
 	for _, v := range transactions {
-		if strings.ToUpper(v.From) == strings.ToUpper(address) {
+		if strings.EqualFold(v.From, address) {
 			mapTransactions[v.To]++
 			count := mapTransactions[v.To]
 			v.Frequency = &count

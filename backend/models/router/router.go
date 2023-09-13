@@ -1,5 +1,16 @@
 package router
 
+type BaseResp struct {
+	Status  string `json:"-"`
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}
+
+type TransactionResponse struct {
+	BaseResp
+	Result interface{} `json:"result"`
+}
+
 type Transaction struct {
 	BlockNumber       string `json:"blockNumber"`
 	TimeStamp         string `json:"timeStamp"`
@@ -24,30 +35,24 @@ type Transaction struct {
 	Frequency         *int   `json:"frequency,omitempty"` // 紀錄該地址交易的頻次
 }
 
-type BaseResp struct {
-	Status  string `json:"-"`
-	Type    string `json:"type"`
-	Message string `json:"message"`
-}
-
-type TransactionResponse struct {
-	BaseResp
-	Result interface{} `json:"result"`
-}
-
-type BalanceResponse struct {
-	BaseResp
-	Result string `json:"result"`
-}
-
-type AmountResponse struct {
-	BaseResp
-	Result []AmountType `json:"result"`
-}
-
 type AmountType struct {
 	From           string   `json:"from"`
 	To             string   `json:"to"`
 	BlockHashArray []string `json:"block_hash_array"`
 	Value          string   `json:"value"`
+}
+
+type TxhashTransaction struct {
+	BlockNumber     string `json:"blockNumber"`
+	TimeStamp       string `json:"timeStamp"`
+	From            string `json:"from"`
+	To              string `json:"to"`
+	Value           string `json:"value"`
+	ContractAddress string `json:"contractAddress"`
+	Input           string `json:"input"`
+	Type            string `json:"type"`
+	Gas             string `json:"gas"`
+	GasUsed         string `json:"gasUsed"`
+	IsError         string `json:"isError"`
+	ErrCode         string `json:"errCode"`
 }

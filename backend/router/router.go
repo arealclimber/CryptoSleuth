@@ -29,5 +29,6 @@ func (router *Router) InitRouter() *gin.Engine {
 	api.GET("/version", router.version)
 	api.GET("/wallet/transaction/history", router.getAssetTransfers)
 	api.GET("/wallet/balance", router.getBalance)
+	api.GET("/wallet/txhash", router.getAssetTransferByTxhash)
 	return r
 }

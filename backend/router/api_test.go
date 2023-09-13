@@ -1,20 +1,9 @@
 package router
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"math/rand"
 	m "sleuth/models/router"
 	"testing"
 )
-
-func randomHash() string {
-	randBytes := make([]byte, 10)
-	rand.Read(randBytes)
-	hasher := sha256.New()
-	hasher.Write(randBytes)
-	return hex.EncodeToString(hasher.Sum(nil))
-}
 
 func TestFindTopFiveTransactionsByFrequency(t *testing.T) {
 	// 定義一個Transaction數組作為範例輸入
