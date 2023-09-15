@@ -3,9 +3,11 @@ package di
 import (
 	"context"
 	"sleuth/app"
+	"sleuth/domain"
 	"sleuth/infras"
 	"sleuth/infras/logger"
 	"sleuth/models/commons"
+	ext "sleuth/repository/external"
 	"sleuth/router"
 )
 
@@ -20,7 +22,9 @@ func CreateServer(ctx context.Context, info *commons.SystemInfo) (*app.Server, e
 		Config: config,
 		Logger: apiLogger,
 	}
-	router := router.NewRouter(options)
+	balanceExt := ext.NewWalletBalanceExt(options)
+	walletTrackingSvc := domain.NewWalletTrackingSvc(options, balanceExt)
+	router := router.NewRouter(options, walletTrackingSvc)
 	Server := app.NewServer(options, router)
 	return Server, nil
 }

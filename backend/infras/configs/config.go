@@ -25,6 +25,7 @@ type ServerConfig struct {
 	ReadTimeout       time.Duration
 	WriteTimeout      time.Duration
 	CtxDefaultTimeout time.Duration
+	ExternalTimeout   time.Duration
 	Debug             bool
 }
 

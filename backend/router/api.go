@@ -2,12 +2,14 @@ package router
 
 import (
 	"container/heap"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	m "sleuth/models/router"
 	"sleuth/utils"
+	"sleuth/utils/errs"
 	"sort"
 	"strconv"
 	"strings"
@@ -44,7 +46,8 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 	}
 	url := "https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&endblock=latest&page=1&offset=1000&sort=desc&apikey=" + router.infra.Config.Etherscan.Token
 
-	body, err := utils.Request("GET", url, nil)
+	ctx := context.Background()
+	body, err := utils.Request(ctx, "GET", url, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
@@ -82,34 +85,19 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 }
 
 func (router *Router) getBalance(c *gin.Context) {
+	var errRsp *errs.ErrorResponse
+
 	address := c.Query("address")
 	if address == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Address parameter is required",
-		})
-		return
-	}
-	url := "https://api.etherscan.io/api?module=account&action=balance&address=" + address + "&tag=latest&apikey=" + router.infra.Config.Etherscan.Token
-
-	body, err := utils.Request("GET", url, nil)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
+		c.JSON(http.StatusBadRequest, &errs.ErrorResponse{
+			Message: "Address parameter is required",
 		})
 		return
 	}
 
-	var rsp m.Response
-	err = json.Unmarshal(body, &rsp)
-	if err != nil {
-		log.Printf("error: can't unmarshal JSON: %s", err)
-	}
-
-	if rsp.Message != "OK" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("error: %s", rsp.Message),
-		})
-		return
+	rsp, errRsp := router.walletTrackingSvc.GetWalletBalance(address)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
 	}
 
 	c.JSON(http.StatusOK, rsp)
@@ -132,7 +120,9 @@ func (router *Router) getAssetTransferByTxhash(c *gin.Context) {
 		Params:  []string{txhash},
 	}
 	body, _ := json.Marshal(reqBody)
-	body, err := utils.Request("POST", url, body)
+
+	ctx := context.Background()
+	body, err := utils.Request(ctx, "POST", url, body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),

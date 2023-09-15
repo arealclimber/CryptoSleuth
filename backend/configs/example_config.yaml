@@ -5,6 +5,7 @@ server:
   ReadTimeout: 3
   WriteTimeout: 3
   CtxDefaultTimeout: 3
+  ExternalTimeout : 3
   Debug: true
 
 logger:

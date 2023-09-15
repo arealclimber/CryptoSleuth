@@ -3,6 +3,8 @@ package router
 import (
 	"sleuth/infras"
 
+	svc "sleuth/domain/interface"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,12 +13,14 @@ type IRouter interface {
 }
 
 type Router struct {
-	infra *infras.Options
+	infra             *infras.Options
+	walletTrackingSvc svc.IWalletTrackingSvc
 }
 
-func NewRouter(opts *infras.Options) *Router {
+func NewRouter(opts *infras.Options, wtSvc svc.IWalletTrackingSvc) *Router {
 	return &Router{
-		infra: opts,
+		infra:             opts,
+		walletTrackingSvc: wtSvc,
 	}
 }
 
