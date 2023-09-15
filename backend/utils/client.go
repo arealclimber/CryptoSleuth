@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 )
 
 var httpClient = &http.Client{
-	Timeout: time.Second * 5, // 3秒的超時
 	Transport: &http.Transport{
 		MaxIdleConns:        100, // 最大閒置連線數
 		IdleConnTimeout:     90 * time.Second,
@@ -18,15 +18,15 @@ var httpClient = &http.Client{
 }
 
 // Request 可以根據HTTP方法和body進行請求
-// param: method, url, bodyData
-func Request(method, url string, bodyData []byte) ([]byte, error) {
+// param: ctx, method, url, bodyData
+func Request(ctx context.Context, method, url string, bodyData []byte) ([]byte, error) {
 	var req *http.Request
 	var err error
 
 	if bodyData != nil {
-		req, err = http.NewRequest(method, url, bytes.NewBuffer(bodyData))
+		req, err = http.NewRequestWithContext(ctx, method, url, bytes.NewBuffer(bodyData))
 	} else {
-		req, err = http.NewRequest(method, url, nil)
+		req, err = http.NewRequestWithContext(ctx, method, url, nil)
 	}
 	if err != nil {
 		return nil, fmt.Errorf("error: can't create request: %w", err)
