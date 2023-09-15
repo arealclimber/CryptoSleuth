@@ -31,6 +31,7 @@ func (wtDeps WalletTrackingSvc) GetWalletBalance(address string) (*m.Response, *
 
 	res, errRsp := wtDeps.WalletBalanceExt.GetWalletBalance(ctx, address)
 	if errRsp != nil {
+		errRsp.Message = "Error while getting wallet balance from external API"
 		return nil, errRsp
 	}
 	return res, nil
