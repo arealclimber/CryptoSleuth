@@ -123,9 +123,16 @@ func (router *Router) getAssetTransferByTxhash(c *gin.Context) {
 		})
 		return
 	}
-	url := "https://api.etherscan.io/api?module=account&action=txlist&txhash=" + txhash + "&apikey=" + router.infra.Config.Etherscan.Token
 
-	body, err := utils.Request("GET", url, nil)
+	url := "https://eth-mainnet.g.alchemy.com/v2/" + router.infra.Config.Alchemy.Token
+	reqBody := m.GetTransactionByHashReq{
+		Id:      1,
+		JsonRpc: "2.0",
+		Method:  "eth_getTransactionByHash",
+		Params:  []string{txhash},
+	}
+	body, _ := json.Marshal(reqBody)
+	body, err := utils.Request("POST", url, body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
@@ -133,20 +140,22 @@ func (router *Router) getAssetTransferByTxhash(c *gin.Context) {
 		return
 	}
 
-	var rsp m.Response
+	var target m.Response
+	var rsp m.GetTransactionByHashResp
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
 		log.Printf("error: can't unmarshal JSON: %s", err)
 	}
 
-	if rsp.Message != "OK" {
+	if rsp.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("error: %s", rsp.Message),
+			"message": fmt.Sprintf("error: %s", rsp.Error.Message),
 		})
 		return
 	}
+	target.Result = rsp.Result
 
-	c.JSON(http.StatusOK, rsp)
+	c.JSON(http.StatusOK, target)
 }
 
 func filterTransactionsWithinTimeRange(transactions m.TransactionResponse, timeRange int) []m.Transaction {
