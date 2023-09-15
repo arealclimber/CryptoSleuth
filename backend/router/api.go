@@ -44,7 +44,7 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 	}
 	url := "https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&endblock=latest&page=1&offset=1000&sort=desc&apikey=" + router.infra.Config.Etherscan.Token
 
-	body, err := utils.Request(router.infra.Config.Etherscan.Token, url)
+	body, err := utils.Request("GET", url, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
@@ -65,19 +65,20 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 		return
 	}
 
+	var target m.Response
 	transactionsWithinRange := filterTransactionsWithinTimeRange(rsp, timeRange)
 	if reqType == "frequency" {
 		TopFiveTransactionsByFrequency := findTopFiveTransactionsByFrequency(address, transactionsWithinRange)
-		rsp.Type = "frequency"
-		rsp.Result = TopFiveTransactionsByFrequency
+		target.Type = "frequency"
+		target.Result = TopFiveTransactionsByFrequency
 	}
 	if reqType == "amount" {
-		TopFiveTransactionsByAmount := findTopFiveTransactionsByAmount(transactionsWithinRange)
-		rsp.Type = "amount"
-		rsp.Result = TopFiveTransactionsByAmount
+		TopFiveTransactionsByAmount := findTopFiveTransactionsByAmount(address, transactionsWithinRange)
+		target.Type = "amount"
+		target.Result = TopFiveTransactionsByAmount
 	}
 
-	c.JSON(http.StatusOK, rsp)
+	c.JSON(http.StatusOK, target)
 }
 
 func (router *Router) getBalance(c *gin.Context) {
@@ -90,7 +91,7 @@ func (router *Router) getBalance(c *gin.Context) {
 	}
 	url := "https://api.etherscan.io/api?module=account&action=balance&address=" + address + "&tag=latest&apikey=" + router.infra.Config.Etherscan.Token
 
-	body, err := utils.Request(router.infra.Config.Etherscan.Token, url)
+	body, err := utils.Request("GET", url, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
@@ -98,7 +99,7 @@ func (router *Router) getBalance(c *gin.Context) {
 		return
 	}
 
-	var rsp m.TransactionResponse
+	var rsp m.Response
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
 		log.Printf("error: can't unmarshal JSON: %s", err)
@@ -122,9 +123,9 @@ func (router *Router) getAssetTransferByTxhash(c *gin.Context) {
 		})
 		return
 	}
-	url := "https://api.etherscan.io/api?module=account&action=txlistinternal&txhash=" + txhash + "&apikey=" + router.infra.Config.Etherscan.Token
+	url := "https://api.etherscan.io/api?module=account&action=txlist&txhash=" + txhash + "&apikey=" + router.infra.Config.Etherscan.Token
 
-	body, err := utils.Request(router.infra.Config.Etherscan.Token, url)
+	body, err := utils.Request("GET", url, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
@@ -132,7 +133,7 @@ func (router *Router) getAssetTransferByTxhash(c *gin.Context) {
 		return
 	}
 
-	var rsp m.TransactionResponse
+	var rsp m.Response
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
 		log.Printf("error: can't unmarshal JSON: %s", err)
@@ -154,7 +155,7 @@ func filterTransactionsWithinTimeRange(transactions m.TransactionResponse, timeR
 
 	now := time.Now().Unix()
 
-	for _, v := range transactions.Result.([]m.Transaction) {
+	for _, v := range transactions.Result {
 		timeStamp, err := strconv.ParseInt(v.TimeStamp, 10, 64)
 		if err == nil {
 			t := time.Unix(timeStamp, 0)
@@ -172,7 +173,7 @@ func filterTransactionsWithinTimeRange(transactions m.TransactionResponse, timeR
 	return target
 }
 
-func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.AmountType {
+func findTopFiveTransactionsByAmount(address string, transactions []m.Transaction) []m.AmountType {
 	sort.Slice(transactions, func(i, j int) bool {
 		amountI, errI := strconv.ParseFloat(transactions[i].Value, 64)
 		amountJ, errJ := strconv.ParseFloat(transactions[j].Value, 64)
@@ -187,25 +188,31 @@ func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.AmountTyp
 	recordMap := make(map[string][]string)
 
 	// 找出不重複錢包地址中交易前五大的錢包地址
-	for i, v := range transactions {
-		countMap[v.To]++
-		target[i].From = v.From
-		target[i].To = v.To
-		target[i].Value = v.Value
-		if len(countMap) == 5 {
-			break
+	for _, v := range transactions {
+		if strings.EqualFold(v.From, address) {
+			var amountType m.AmountType
+			countMap[v.To]++
+			amountType.From = v.From
+			amountType.To = v.To
+			amountType.Value = v.Value
+			if countMap[v.To] == 1 {
+				target = append(target, amountType)
+			}
+			if len(countMap) == 5 {
+				break
+			}
 		}
 	}
 
 	// 紀錄相同錢包地址的所有BlockHash
 	for _, v := range transactions {
-		recordMap[v.To] = append(recordMap[v.To], v.BlockHash)
+		recordMap[v.To] = append(recordMap[v.To], v.Hash)
 	}
 
 	var count int = 0
 	for key := range countMap {
-		if blockHashSlice, exists := recordMap[key]; exists {
-			target[count].BlockHashArray = blockHashSlice
+		if txHashSlice, exists := recordMap[key]; exists {
+			target[count].TxHashArray = txHashSlice
 			count++
 		}
 	}
@@ -213,21 +220,19 @@ func findTopFiveTransactionsByAmount(transactions []m.Transaction) []m.AmountTyp
 	return target
 }
 
-func findTopFiveTransactionsByFrequency(address string, transactions []m.Transaction) []m.Transaction {
+func findTopFiveTransactionsByFrequency(address string, transactions []m.Transaction) []m.FrequencyType {
 	mapTransactions := make(map[string]int)
-	lastTransactionByTo := make(map[string]m.Transaction)
 	var topFive utils.MinHeap
 	heap.Init(&topFive)
 
+	// 計數相同錢包地址的交易頻次
 	for _, v := range transactions {
 		if strings.EqualFold(v.From, address) {
 			mapTransactions[v.To]++
-			count := mapTransactions[v.To]
-			v.Frequency = &count
-			lastTransactionByTo[v.To] = v
 		}
 	}
 
+	// 篩出前五大交易頻次的錢包地址
 	for key, value := range mapTransactions {
 		if topFive.Len() < 5 {
 			heap.Push(&topFive, utils.Pair{To: key, Count: value})
@@ -237,11 +242,20 @@ func findTopFiveTransactionsByFrequency(address string, transactions []m.Transac
 		}
 	}
 
-	var target []m.Transaction
+	recordMap := make(map[string][]string)
+	// 紀錄相同錢包地址的所有BlockHash
+	for _, v := range transactions {
+		recordMap[v.To] = append(recordMap[v.To], v.Hash)
+	}
+
+	var target []m.FrequencyType
 	for _, pair := range topFive {
-		if transaction, exists := lastTransactionByTo[pair.To]; exists {
-			target = append(target, transaction)
-		}
+		var frequencyType m.FrequencyType
+		frequencyType.From = address
+		frequencyType.To = pair.To
+		frequencyType.Frequency = pair.Count
+		frequencyType.TxHashArray = recordMap[pair.To]
+		target = append(target, frequencyType)
 	}
 
 	return target
