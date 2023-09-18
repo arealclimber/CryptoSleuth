@@ -2,7 +2,7 @@ package flags
 
 import (
 	"flag"
-	model_com "sleuth/models/commons"
+	model_com "sleuth/model/commons"
 )
 
 func LoadFlag() *model_com.SystemInfo {

@@ -3,8 +3,8 @@ package domain
 import (
 	"context"
 	"sleuth/infras"
-	m_domain_txhis "sleuth/models/domain/transaction_history"
-	m_router "sleuth/models/router"
+	m_domain_txhis "sleuth/model/domain/transaction_history"
+	m_router "sleuth/model/router"
 	rep "sleuth/repository/interface"
 	"sleuth/utils/errs"
 	"time"
@@ -48,7 +48,7 @@ func (wts WalletTrackingSvc) GetWalletBalance(address string) (*m_router.Respons
 }
 
 // GetTransactionHistory is a function that returns the transaction history of a wallet
-func (wts WalletTrackingSvc) GetTransactionHistory(params m_router.TransationHistory) (*m_router.Response, *errs.ErrorResponse) {
+func (wts WalletTrackingSvc) GetTransactionHistory(params m_router.TransationHistoryReq) (*m_router.Response, *errs.ErrorResponse) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), wts.ExternalTimeout*time.Second)
 	defer cancel()
@@ -73,6 +73,24 @@ func (wts WalletTrackingSvc) GetTransactionHistory(params m_router.TransationHis
 		target.Type = "amount"
 		target.Result = TopFiveTransactionsByAmount
 	}
+
+	return target, nil
+}
+
+// GetTransactionHistoryByTxhash is a function that returns the transaction history of a wallet
+func (wts WalletTrackingSvc) GetTransactionHistoryByTxhash(txhash string) (*m_router.Response, *errs.ErrorResponse) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), wts.ExternalTimeout*time.Second)
+	defer cancel()
+
+	rsp, errRsp := wts.TransactionHistoryExt.GetTransactionHistoryByTxhash(ctx, txhash)
+	if errRsp != nil {
+		errRsp.Message = "Error while getting transaction history from external API"
+		return nil, errRsp
+	}
+
+	target := &m_router.Response{}
+	target.Result = rsp.Result
 
 	return target, nil
 }

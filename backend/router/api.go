@@ -1,13 +1,8 @@
 package router
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
-	m "sleuth/models/router"
-	"sleuth/utils"
+	m_router "sleuth/model/router"
 	"sleuth/utils/errs"
 	"strconv"
 
@@ -41,7 +36,7 @@ func (router *Router) getTransactions(c *gin.Context) {
 		return
 	}
 
-	req := m.TransationHistory{
+	req := m_router.TransationHistoryReq{
 		Address:   address,
 		TimeRange: timeRange,
 		Type:      reqType,
@@ -85,38 +80,11 @@ func (router *Router) getTransactionByTxhash(c *gin.Context) {
 		return
 	}
 
-	url := "https://eth-mainnet.g.alchemy.com/v2/" + router.infra.Config.Alchemy.Token
-	reqBody := m.GetTransactionByHashReq{
-		Id:      1,
-		JsonRpc: "2.0",
-		Method:  "eth_getTransactionByHash",
-		Params:  []string{txhash},
-	}
-	body, _ := json.Marshal(reqBody)
-
-	ctx := context.Background()
-	body, err := utils.Request(ctx, "POST", url, body)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
-		})
+	rsp, errRsp := router.walletTrackingSvc.GetTransactionHistoryByTxhash(txhash)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
 		return
 	}
 
-	var target m.Response
-	var rsp m.GetTransactionByHashResp
-	err = json.Unmarshal(body, &rsp)
-	if err != nil {
-		log.Printf("error: can't unmarshal JSON: %s", err)
-	}
-
-	if rsp.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("error: %s", rsp.Error.Message),
-		})
-		return
-	}
-	target.Result = rsp.Result
-
-	c.JSON(http.StatusOK, target)
+	c.JSON(http.StatusOK, rsp)
 }

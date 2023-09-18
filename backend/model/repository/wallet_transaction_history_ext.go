@@ -1,10 +1,4 @@
-package router
-
-type BaseResp struct {
-	Status  string `json:"-"`
-	Type    string `json:"type,omitempty"`
-	Message string `json:"message"`
-}
+package repository
 
 type TransactionResponse struct {
 	BaseResp
@@ -35,25 +29,6 @@ type Transaction struct {
 	Frequency         *int   `json:"frequency,omitempty"` // 紀錄該地址交易的頻次
 }
 
-type Response struct {
-	BaseResp
-	Result interface{} `json:"result"`
-}
-
-type AmountType struct {
-	From        string   `json:"from"`
-	To          string   `json:"to"`
-	TxHashArray []string `json:"txhash_array"`
-	Value       string   `json:"value"`
-}
-
-type FrequencyType struct {
-	From        string   `json:"from"`
-	To          string   `json:"to"`
-	TxHashArray []string `json:"txhash_array"`
-	Frequency   int      `json:"frequency"`
-}
-
 type GetTransactionByHashReq struct {
 	Id      uint8    `json:"id"`
 	JsonRpc string   `json:"jsonrpc"`
@@ -61,7 +36,7 @@ type GetTransactionByHashReq struct {
 	Params  []string `json:"params"`
 }
 
-type GetTransactionByHashResp struct {
+type GetTransactionByHashRsp struct {
 	// JSON-RPC的版本
 	Jsonrpc string `json:"jsonrpc"`
 	// 請求的ID
@@ -106,10 +81,4 @@ type TransactionDetails struct {
 	V string `json:"v"`
 	// 交易的價值
 	Value string `json:"value"`
-}
-
-type TransationHistory struct {
-	Address   string `json:"address"`
-	TimeRange int    `json:"time_range"`
-	Type      string `json:"req_type"`
 }

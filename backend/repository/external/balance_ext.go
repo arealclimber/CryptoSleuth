@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"sleuth/infras"
-	m "sleuth/models/repository"
+	m "sleuth/model/repository"
 	rep_interface "sleuth/repository/interface"
 	"sleuth/utils"
 	"sleuth/utils/errs"

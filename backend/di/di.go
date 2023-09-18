@@ -6,7 +6,7 @@ import (
 	"sleuth/domain"
 	"sleuth/infras"
 	"sleuth/infras/logger"
-	"sleuth/models/commons"
+	"sleuth/model/commons"
 	ext "sleuth/repository/external"
 	"sleuth/router"
 )

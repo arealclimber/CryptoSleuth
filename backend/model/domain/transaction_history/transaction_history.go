@@ -1,7 +1,7 @@
 package transaction_history
 
 import (
-	m_rep "sleuth/models/repository"
+	m_rep "sleuth/model/repository"
 )
 
 type BaseResp struct {

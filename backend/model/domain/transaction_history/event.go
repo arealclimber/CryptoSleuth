@@ -2,7 +2,7 @@ package transaction_history
 
 import (
 	"container/heap"
-	m_rep "sleuth/models/repository"
+	m_rep "sleuth/model/repository"
 	"sleuth/utils"
 	"sort"
 	"strconv"
