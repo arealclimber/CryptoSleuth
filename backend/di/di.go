@@ -23,7 +23,8 @@ func CreateServer(ctx context.Context, info *commons.SystemInfo) (*app.Server, e
 		Logger: apiLogger,
 	}
 	balanceExt := ext.NewWalletBalanceExt(options)
-	walletTrackingSvc := domain.NewWalletTrackingSvc(options, balanceExt)
+	transactionHistoryExt := ext.NewTransactionHistoryExt(options)
+	walletTrackingSvc := domain.NewWalletTrackingSvc(options, balanceExt, transactionHistoryExt)
 	router := router.NewRouter(options, walletTrackingSvc)
 	Server := app.NewServer(options, router)
 	return Server, nil

@@ -31,8 +31,8 @@ func (router *Router) InitRouter() *gin.Engine {
 	api := r.Group("/")
 	api.GET("/ping", router.ping)
 	api.GET("/version", router.version)
-	api.GET("/wallet/transaction/history", router.getAssetTransfers)
+	api.GET("/wallet/transaction/history", router.getTransactions)
 	api.GET("/wallet/balance", router.getBalance)
-	api.GET("/wallet/txhash", router.getAssetTransferByTxhash)
+	api.GET("/wallet/txhash", router.getTransactionByTxhash)
 	return r
 }

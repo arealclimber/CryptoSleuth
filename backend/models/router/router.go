@@ -107,3 +107,9 @@ type TransactionDetails struct {
 	// 交易的價值
 	Value string `json:"value"`
 }
+
+type TransationHistory struct {
+	Address   string `json:"address"`
+	TimeRange int    `json:"time_range"`
+	Type      string `json:"req_type"`
+}

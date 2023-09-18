@@ -13,18 +13,18 @@ import (
 	"sleuth/utils/errs"
 )
 
-type WalletBalanceExt struct {
+type TransationHistoryExt struct {
 	opts *infras.Options
 }
 
-func NewWalletBalanceExt(opts *infras.Options) rep_interface.IWalletBalanceExt {
-	return &WalletBalanceExt{
+func NewTransactionHistoryExt(opts *infras.Options) rep_interface.ITransationHistoryExt {
+	return &TransationHistoryExt{
 		opts: opts,
 	}
 }
 
-func (wbExt *WalletBalanceExt) GetWalletBalance(ctx context.Context, address string) (*m.Response, *errs.ErrorResponse) {
-	url := "https://api.etherscan.io/api?module=account&action=balance&address=" + address + "&tag=latest&apikey=" + wbExt.opts.Config.Etherscan.Token
+func (thExt *TransationHistoryExt) GetTransactionHistory(ctx context.Context, address string) (*m.TransactionResponse, *errs.ErrorResponse) {
+	url := "https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&endblock=latest&page=1&offset=1000&sort=desc&apikey=" + thExt.opts.Config.Etherscan.Token
 
 	body, err := utils.Request(ctx, "GET", url, nil)
 	if err != nil {
@@ -34,7 +34,7 @@ func (wbExt *WalletBalanceExt) GetWalletBalance(ctx context.Context, address str
 		}
 	}
 
-	var rsp m.Response
+	var rsp m.TransactionResponse
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
 		log.Printf("error: can't unmarshal JSON: %s", err)
