@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	svc_interface "sleuth/domain/interface"
 	"sleuth/infras"
 	m_domain_txhis "sleuth/model/domain/transaction_history"
 	m_router "sleuth/model/router"
@@ -14,10 +15,10 @@ type WalletTrackingSvc struct {
 	opts                  *infras.Options
 	ExternalTimeout       time.Duration
 	WalletBalanceExt      rep.IWalletBalanceExt
-	TransactionHistoryExt rep.ITransationHistoryExt
+	TransactionHistoryExt rep.IWalletTransationHistoryExt
 }
 
-func NewWalletTrackingSvc(opts *infras.Options, wbExt rep.IWalletBalanceExt, thExt rep.ITransationHistoryExt) *WalletTrackingSvc {
+func NewWalletTrackingSvc(opts *infras.Options, wbExt rep.IWalletBalanceExt, thExt rep.IWalletTransationHistoryExt) svc_interface.IWalletTrackingSvc {
 	return &WalletTrackingSvc{
 		opts:                  opts,
 		ExternalTimeout:       opts.Config.Server.ExternalTimeout,
@@ -53,7 +54,7 @@ func (wts WalletTrackingSvc) GetTransactionHistory(params m_router.TransationHis
 	ctx, cancel := context.WithTimeout(context.Background(), wts.ExternalTimeout*time.Second)
 	defer cancel()
 
-	rsp, errRsp := wts.TransactionHistoryExt.GetTransactionHistory(ctx, params.Address)
+	rsp, errRsp := wts.TransactionHistoryExt.GetWalletTransactionHistory(ctx, params.Address)
 	if errRsp != nil {
 		errRsp.Message = "Error while getting transaction history from external API"
 		return nil, errRsp
@@ -83,7 +84,7 @@ func (wts WalletTrackingSvc) GetTransactionHistoryByTxhash(txhash string) (*m_ro
 	ctx, cancel := context.WithTimeout(context.Background(), wts.ExternalTimeout*time.Second)
 	defer cancel()
 
-	rsp, errRsp := wts.TransactionHistoryExt.GetTransactionHistoryByTxhash(ctx, txhash)
+	rsp, errRsp := wts.TransactionHistoryExt.GetWalletTransactionHistoryByTxhash(ctx, txhash)
 	if errRsp != nil {
 		errRsp.Message = "Error while getting transaction history from external API"
 		return nil, errRsp

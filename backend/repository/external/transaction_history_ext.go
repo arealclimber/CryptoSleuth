@@ -17,13 +17,13 @@ type TransationHistoryExt struct {
 	opts *infras.Options
 }
 
-func NewTransactionHistoryExt(opts *infras.Options) rep_interface.ITransationHistoryExt {
+func NewTransactionHistoryExt(opts *infras.Options) rep_interface.IWalletTransationHistoryExt {
 	return &TransationHistoryExt{
 		opts: opts,
 	}
 }
 
-func (thExt *TransationHistoryExt) GetTransactionHistory(ctx context.Context, address string) (*m.TransactionResponse, *errs.ErrorResponse) {
+func (thExt *TransationHistoryExt) GetWalletTransactionHistory(ctx context.Context, address string) (*m.TransactionResponse, *errs.ErrorResponse) {
 	url := "https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&endblock=latest&page=1&offset=1000&sort=desc&apikey=" + thExt.opts.Config.Etherscan.Token
 
 	body, err := utils.Request(ctx, "GET", url, nil)
@@ -50,7 +50,7 @@ func (thExt *TransationHistoryExt) GetTransactionHistory(ctx context.Context, ad
 	return &rsp, nil
 }
 
-func (thExt *TransationHistoryExt) GetTransactionHistoryByTxhash(ctx context.Context, txhash string) (*m.GetTransactionByHashRsp, *errs.ErrorResponse) {
+func (thExt *TransationHistoryExt) GetWalletTransactionHistoryByTxhash(ctx context.Context, txhash string) (*m.GetTransactionByHashRsp, *errs.ErrorResponse) {
 	url := "https://eth-mainnet.g.alchemy.com/v2/" + thExt.opts.Config.Alchemy.Token
 	reqBody := m.GetTransactionByHashReq{
 		Id:      1,
