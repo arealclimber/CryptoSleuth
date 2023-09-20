@@ -26,6 +26,7 @@ import InfoModal from '../components/InfoModal';
 import Toast from '../components/Toast';
 import CashOutBall from '../components/CashOutBall';
 import CashInBall from '../components/CashInBall';
+import axios from 'axios';
 
 const w = 'w-[20.625rem]';
 const h = 'h-[20.625rem]';
@@ -47,15 +48,15 @@ const Home = () => {
 	};
 
 	// TODO: get the balance of targeted address
-	const fetcher = async (...args: Parameters<typeof fetch>): Promise<any> => {
-		const res = await fetch(...args)
-			.then(res => res.json())
-			.catch(err => {
-				console.error('error', err);
-			});
-
-		console.log('res', res);
-		return res;
+	const fetcher = async (url: string, config?: any): Promise<any> => {
+		try {
+			const response = await axios(url, config);
+			console.log('res', response.data);
+			return response.data;
+		} catch (err) {
+			console.error('error', err);
+			throw err;
+		}
 	};
 
 	const searchClickHandler = async () => {
@@ -67,11 +68,11 @@ const Home = () => {
 
 		// TODO: balance hasn't done yet
 		// FIXME: There's error calling http API request
-		// const balance = await fetch(
-		// 	`http://54.199.12.7:8070/wallet/balance?address=${inputRef.current?.value}`
-		// );
+		const balance = await fetcher(
+			`http://54.199.12.7:8070/wallet/balance?address=${inputRef.current?.value}`
+		);
 
-		// console.log('balance', balance);
+		console.log('balance', balance);
 
 		// TODO: validate the address
 		if (inputRef.current?.value) {
