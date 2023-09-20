@@ -26,7 +26,6 @@ type Transaction struct {
 	Confirmations     string `json:"confirmations"`
 	MethodId          string `json:"methodId"`
 	FunctionName      string `json:"functionName"`
-	Frequency         *int   `json:"frequency,omitempty"` // 紀錄該地址交易的頻次
 }
 
 type GetTransactionByHashReq struct {

@@ -4,7 +4,7 @@ import (
 	"context"
 	svc_interface "sleuth/domain/interface"
 	"sleuth/infras"
-	m_domain_txhis "sleuth/model/domain/transaction_history"
+	m_domain_tx_his "sleuth/model/domain/transaction_history"
 	m_router "sleuth/model/router"
 	rep "sleuth/repository/interface"
 	"sleuth/utils/errs"
@@ -59,11 +59,15 @@ func (wts WalletTrackingSvc) GetTransactionHistory(params m_router.TransationHis
 		errRsp.Message = "Error while getting transaction history from external API"
 		return nil, errRsp
 	}
-	svcRsp := m_domain_txhis.ConvertRspToSvcModel(rsp)
+	svcRsp := m_domain_tx_his.ConvertRspToSvcModel(rsp)
 
 	svcRsp.FilterTransactionsWithinTimeRange(params.TimeRange)
 
-	target := &m_router.Response{}
+	target := &m_router.Response{
+		BaseResp: m_router.BaseResp{
+			Message: rsp.Message,
+		},
+	}
 	if params.Type == "frequency" {
 		TopFiveTransactionsByFrequency := svcRsp.FindTopFiveTransactionsByFrequency(params.Address)
 		target.Type = "frequency"

@@ -27,7 +27,7 @@ func init() {
 // RandomInt generates a random integer between min and max
 func RandomInt(min, max int64) int64 {
 	return min + rand.Int63n(max-min+1)
-} // Austin 20220616
+}
 
 // random number
 // @param length 幾位數
@@ -39,7 +39,7 @@ func RandomNum(length int) string {
 		result = result + strconv.Itoa(num)
 	}
 	return result
-} // Austin 20210727
+}
 
 // generates a random string of length n
 // @param n length
