@@ -20,7 +20,8 @@ var loggerLevelMap = map[string]zapcore.Level{
 	"dpanic": zapcore.DPanicLevel, // DPanic 特別重大的錯誤，在開發模式下引起 panic.
 	"panic":  zapcore.PanicLevel,  // Panic 記錄訊息後呼叫 panic.
 	"fatal":  zapcore.FatalLevel,  // Fatal 記錄訊息後呼叫 os.Exit(1)
-} // Austin 20220524
+}
+
 // endregion
 
 // region constructor
@@ -35,7 +36,7 @@ func NewApiLogger(cfg *configs.Config) *ApiLogger {
 	iLogger := &ApiLogger{cfg: cfg}
 	iLogger.InitLogger()
 	return iLogger
-} // Austin 20220524
+}
 
 // endregion
 
@@ -83,7 +84,7 @@ func (log *ApiLogger) InitLogger() {
 	if err := log.sugarLogger.Sync(); err != nil {
 		log.sugarLogger.Error(err)
 	}
-} // Austin 20220526
+}
 
 // region public methods
 // debug 使用 fmt.Sprint 建構和記錄訊息
@@ -197,5 +198,6 @@ func (log *ApiLogger) getLoggerLevel(cfg *configs.Config) zapcore.Level {
 		return zapcore.DebugLevel
 	}
 	return level
-} // Austin 20220524
+}
+
 // endregion

@@ -1,0 +1,12 @@
+h1 {
+	font-size: 100px;
+	font-family: 'Intro', sans-serif;
+	font-weight: 800;
+	text-transform: uppercase;
+	/* Warning: no fallback */
+
+	background: -webkit-linear-gradient(-86deg, #eef85b 5%, #7aec8d 53%, #09e5c3 91%);
+	-webkit-background-clip: text;
+	-webkit-text-stroke: 4px transparent;
+	color: #232d2d;
+}

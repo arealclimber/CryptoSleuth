@@ -1,11 +1,10 @@
 package router
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
-	r_model "sleuth/models/router"
+	m_router "sleuth/model/router"
+	"sleuth/utils/errs"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,8 +17,18 @@ func (router *Router) version(c *gin.Context) {
 	c.JSON(200, router.infra.Info)
 }
 
-func (router *Router) getAssetTransfers(c *gin.Context) {
+func (router *Router) getTransactions(c *gin.Context) {
 	address := c.Query("address")
+	tr := c.DefaultQuery("time_range", "60")
+	reqType := c.DefaultQuery("type", "amount") // amount or frequency
+	timeRange, err := strconv.Atoi(tr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Time range parameter must be a number",
+		})
+		return
+	}
+
 	if address == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Address parameter is required",
@@ -27,34 +36,55 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 		return
 	}
 
-	requestBody := &r_model.Request{
-		Jsonrpc: "2.0",
-		Method:  "alchemy_getAssetTransfers",
-		Params: []r_model.Param{
-			{
-				FromBlock:   "0x0",
-				Category:    []string{"external", "erc20", "erc721"},
-				FromAddress: address,
-			},
-		},
-		ID: 0,
+	req := m_router.TransationHistoryReq{
+		Address:   address,
+		TimeRange: timeRange,
+		Type:      reqType,
 	}
-	jsonValue, _ := json.Marshal(requestBody)
 
-	resp, err := http.Post("https://eth-mainnet.g.alchemy.com/v2/"+router.infra.Config.Alchemy.Token, "application/json", bytes.NewBuffer(jsonValue))
+	rsp, errRsp := router.walletTrackingSvc.GetTransactionHistory(req)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
+		return
+	}
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": err.Error(),
+	c.JSON(http.StatusOK, rsp)
+}
+
+func (router *Router) getBalance(c *gin.Context) {
+	var errRsp *errs.ErrorResponse
+
+	address := c.Query("address")
+	if address == "" {
+		c.JSON(http.StatusBadRequest, &errs.ErrorResponse{
+			Message: "Address parameter is required",
 		})
 		return
 	}
-	defer resp.Body.Close()
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	rsp, errRsp := router.walletTrackingSvc.GetWalletBalance(address)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
+		return
+	}
 
-	var result map[string]interface{}
-	json.Unmarshal(body, &result)
+	c.JSON(http.StatusOK, rsp)
+}
 
-	c.JSON(http.StatusOK, result)
+func (router *Router) getTransactionByTxhash(c *gin.Context) {
+	txhash := c.Query("txhash")
+	if txhash == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "txhash parameter is required",
+		})
+		return
+	}
+
+	rsp, errRsp := router.walletTrackingSvc.GetTransactionHistoryByTxhash(txhash)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
+		return
+	}
+
+	c.JSON(http.StatusOK, rsp)
 }

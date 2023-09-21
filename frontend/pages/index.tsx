@@ -1,192 +1,144 @@
-import {useEffect, useState} from 'react';
-import {ITransaction, ITransactionHistory} from '../interfaces/transactions';
-import Ball from '../components/Ball';
-import {wait} from '../utils/common';
+/**
+ * TODO:
+ * 0. Layout: Ball, History
+ * 1. Scroll bar decoration
+ * 2. Call API and render data
+ *
+ */
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
 
-const API = `/api/wallet/transactions/history`;
-enum MOVE_TO {
-	RIGHT = 'translate-x-[200px]',
-	RIGHT_TOP = 'translate-x-[200px] -translate-y-[200px]',
-	RIGHT_DOWN = 'translate-x-[200px] translate-y-[200px]',
-	LEFT = '-translate-x-[200px]',
-	LEFT_TOP = '-translate-x-[200px] -translate-y-[200px]',
-	TOP = '-translate-y-[200px]',
-	BOTTOM = 'translate-y-[200px]',
-	STILL = 'bg-gray-200',
-}
-
-export default function Home() {
-	const [walletAddress, setWalletAddress] = useState<string>('');
-	const [data, setData] = useState<ITransactionHistory | undefined>(undefined);
-	const [loading, setLoading] = useState<boolean>(false);
-	const [changed1, setChanged1] = useState<boolean>(false);
-	const [changed2, setChanged2] = useState<boolean>(false);
-	const [changed3, setChanged3] = useState<boolean>(false);
-	const [changed4, setChanged4] = useState<boolean>(false);
-	const [changed5, setChanged5] = useState<boolean>(false);
-
-	const [disable1, setDisable1] = useState<boolean>(false);
-
-	const requestHandler = async (walletAddress: string) => {
-		setLoading(true);
-		setData(undefined);
-
-		const result = await fetch(`${API}/${walletAddress}`)
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('HTTP error ' + response.status);
-				}
-				return response.json();
-			})
-			.then(data => {
-				setData(data);
-			})
-			.catch(err => {
-				// FIXME: to be removed
-				console.error('Fetch failed', err);
-			});
-		await wait(1000);
-		setLoading(false);
-	};
-
-	const btnClickHandler = async () => {
-		await requestHandler(walletAddress.toLowerCase());
-	};
-
-	const ballClickHandlersRouter = () => {
-		return {
-			ball1: () => {
-				setChanged1(!changed1);
-			},
-			ball2: () => {
-				setChanged2(!changed2);
-			},
-			ball3: () => {
-				setChanged3(!changed3);
-			},
-			ball4: () => {
-				setChanged4(!changed4);
-			},
-			ball5: () => {
-				setChanged5(!changed5);
-			},
-		};
-	};
-
-	const ballClickHandlers = ballClickHandlersRouter();
-
+const Home = () => {
 	return (
-		<main className={`flex min-h-screen flex-col items-center justify-between p-24`}>
-			<div className="z-10 w-full max-w-5xl items-center justify-between text-sm flex-col">
-				<p className="text-5xl">Crypto Sleuth</p>
-				<div className="mt-10 flex space-x-10">
+		<div className="">
+			<div className="py-5 px-10 w-1/5">
+				<Link href="/">
+					<Image
+						className="hover:opacity-80 transition-all duration-300"
+						src="/elements/crypto_sleuth.svg"
+						alt="logo"
+						width={208}
+						height={10}
+					/>
+				</Link>
+			</div>
+			{/* <div className="">
+				<Image
+					src="/elements/banner.svg"
+					alt="banner"
+					width={0}
+					height={0}
+					sizes="100vw"
+					style={{width: '100%', height: 'auto'}}
+				/>
+			</div> */}
+
+			{/* <div
+				style={{
+					backgroundImage: `url('/elements/banner.svg')`,
+					objectFit: 'contain',
+					// backgroundSize: `${WIDTH_OF_SHARING_RECORD}px ${HEIGHT_OF_SHARING_RECORD}px`,
+					backgroundPosition: 'relative',
+					backgroundRepeat: 'no-repeat',
+
+					display: 'flex',
+					// flexDirection: 'column',
+					// alignItems: 'flex-start',
+					// justifyContent: 'flex-center',
+					height: '100vh',
+					width: '100vw',
+
+					// height: `${HEIGHT_OF_SHARING_RECORD}px`,
+					// width: `${WIDTH_OF_SHARING_RECORD}px`,
+				}}
+			></div> */}
+			<div className="flex flex-col justify-start space-y-6 items-center bg-cover bg-center w-screen h-[400px] bg-[url('/elements/banner.svg')]">
+				<div className="text-white text-[40px] fold-bold mt-16">
+					Lorem ipsum dolor sit amet consectetur.{' '}
+				</div>
+				<div className="flex justify-center space-x-10">
 					<input
-						value={walletAddress}
-						onChange={e => setWalletAddress(e.target.value)}
-						className="w-full h-10 px-3 py-2 disabled:bg-slate-300 text-base disabled:text-black text-black placeholder-gray-400 border rounded-lg focus:shadow-outline focus:outline-none"
-						placeholder="A wallet address on the ETH"
-						disabled={loading}
-					/>{' '}
-					<button
-						disabled={loading}
-						onClick={btnClickHandler}
-						className="disabled:bg-blue-900 text-lg w-[150px] hover:text-white text-black bg-blue-400 rounded-lg hover:bg-blue-600 transition-all duration-300"
-					>
-						{loading ? (
-							<div role="status">
-								<svg
-									aria-hidden="true"
-									className="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
-									viewBox="0 0 100 101"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<path
-										d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-										fill="currentColor"
-									/>
-									<path
-										d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-										fill="currentFill"
-									/>
-								</svg>
-								<span className="sr-only">Loading...</span>
-							</div>
-						) : (
-							`Search`
-						)}
+						placeholder="Search by Address"
+						type="text"
+						className="text-white text-[20px] tracking-wider px-8 bg-white/50 h-[50px] w-[936px] rounded-3xl focus:outline-none placeholder:text-white"
+					/>
+
+					<button className="px-10 py-2 border-white border-[3px] bg-transparent rounded-3xl text-[20px] text-white hover:text-black hover:border-black transition-all duration-300">
+						Search
 					</button>
 				</div>
-				<div className="w-full mt-10">
-					<Ball
-						changeTo={MOVE_TO.STILL}
-						locate={`mx-auto`}
-						changed={changed5}
-						clickHandler={ballClickHandlers.ball5}
-						size="w-96 h-96 z-10"
-					/>{' '}
-					<Ball
-						changeTo={MOVE_TO.LEFT_TOP}
-						locate={`absolute top-[530px] right-[300px]`}
-						changed={changed1}
-						clickHandler={ballClickHandlers.ball1}
-						style="z-20"
-					/>
-					<Ball
-						changeTo={MOVE_TO.RIGHT_TOP}
-						locate={`absolute top-[500px] left-[250px]`}
-						changed={changed2}
-						clickHandler={ballClickHandlers.ball2}
-						style="z-10"
-					/>
-					<Ball
-						changeTo={MOVE_TO.RIGHT_DOWN}
-						locate={`absolute top-[250px] left-[300px]`}
-						changed={changed3}
-						clickHandler={ballClickHandlers.ball3}
-						style="z-10"
-					/>
-					<Ball
-						changeTo={MOVE_TO.LEFT}
-						locate={`absolute top-[300px] right-[250px]`}
-						changed={changed4}
-						clickHandler={ballClickHandlers.ball4}
-						style="z-10"
-					/>
-				</div>
-				<div className="mt-10 text-lg">
-					{!loading && data ? (
-						<>
-							<div
-								className={`${`bg-blue-200 rounded-md`} p-5 max-w-[550px] truncate text-black`}
-							>
-								{data?.wallet ? `Wallet: ${data?.wallet}` : ``}
-							</div>
-
-							<div className="mt-10 flex flex-col text-lg space-y-10">
-								{data.transactions.map((t, index) => {
-									return (
-										<div
-											key={t.txhash}
-											className="flex space-x-10 border-blue-300 p-5 rounded-lg border-2"
-										>
-											<div className="">{index + 1}.</div>
-											<div className="flex flex-col">
-												<p className="">Txhash: {t.txhash}</p>
-												<p className="">From: {t.from}</p>
-												<p className="">To: {t.to} </p>
-												<p className="">Value: {t.value}</p>
-											</div>
-											<div className=""> </div>
-										</div>
-									);
-								})}
-							</div>
-						</>
-					) : null}
-				</div>
-				<div></div>
 			</div>
-		</main>
+
+			{/* ---Card--- */}
+			<div className="flex justify-center mt-12">
+				<div
+					className="bg-white rounded-3xl mx-10 p-10 min-h-40 min-w-[1128px] -mt-40"
+					style={{boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)'}}
+				>
+					<div className="text-[32px] font-bold">iven.eth</div>
+					<div className="flex space-x-3">
+						<div className="">0x18a4489a739ac9835da14e006b35d65040e53a4a</div>
+						<div className="">
+							<Image
+								className="hover:cursor-pointer"
+								src="elements/copy_icon.svg"
+								alt="icon"
+								width={24}
+								height={24}
+							/>
+						</div>
+					</div>
+
+					<div className="flex justify-between mt-10 w-2/3">
+						<div className="">
+							<div className="text-gray-600">ETH BALANCE</div>
+
+							<div className="flex space-x-1 mt-2">
+								<div className="">
+									<Image
+										className="hover:cursor-pointer"
+										src="elements/eth.svg"
+										alt="icon"
+										width={32}
+										height={32}
+									/>
+								</div>{' '}
+								<div className="font-bold text-2xl">
+									3,844.653070438940336094 ETH
+								</div>
+							</div>
+						</div>
+
+						<div className="">
+							<div className="text-gray-600">ETH VALUE</div>
+							<div className="font-bold text-2xl mt-2">$7,036,330.26</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{/* ---Card--- */}
+
+			{/* <div className='mx-10'></div> */}
+
+			<div className="flex justify-start space-x-5 mx-[450px] mt-10">
+				<button className="px-10 py-3 bg-gray text-gray-50 rounded-xl">Now</button>
+				<button className="px-10 py-3 bg-gray text-gray-50 rounded-xl">Now</button>
+				<button className="px-10 py-3 bg-gray text-gray-50 rounded-xl">Now</button>
+				<button className="px-10 py-3 bg-gray text-gray-50 rounded-xl">Now</button>
+				<button className="px-10 py-3 bg-gray text-gray-50 rounded-xl">Now</button>
+			</div>
+			{/* Ball */}
+			<div className=""></div>
+
+			{/* History */}
+			<div className=""></div>
+
+			{/* Footer */}
+			<div className="bg-gray-700 h-[600px] mt-40"></div>
+		</div>
 	);
-}
+};
+
+export default Home;
