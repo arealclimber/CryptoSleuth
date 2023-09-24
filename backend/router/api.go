@@ -1,12 +1,10 @@
 package router
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
-	m "sleuth/models/router"
+	m_router "sleuth/model/router"
+	"sleuth/utils/errs"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,40 +17,34 @@ func (router *Router) version(c *gin.Context) {
 	c.JSON(200, router.infra.Info)
 }
 
-func (router *Router) getAssetTransfers(c *gin.Context) {
+func (router *Router) getTransactions(c *gin.Context) {
 	address := c.Query("address")
+	tr := c.DefaultQuery("time_range", "60")
+	reqType := c.DefaultQuery("type", "amount") // amount or frequency
+	timeRange, err := strconv.Atoi(tr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Time range parameter must be a number",
+		})
+		return
+	}
+
 	if address == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Address parameter is required",
 		})
 		return
 	}
-	url := "https://api.etherscan.io/api?module=account&action=txlist&address=" + address + "&startblock=0&endblock=latest&page=1&offset=10&sort=desc&apikey=" + router.infra.Config.Etherscan.Token
 
-	resp, err := http.Get(url)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
-		})
-		return
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("error: can't read response body: %s", err)
+	req := m_router.TransationHistoryReq{
+		Address:   address,
+		TimeRange: timeRange,
+		Type:      reqType,
 	}
 
-	var rsp m.TransactionResponse
-	err = json.Unmarshal(body, &rsp)
-	if err != nil {
-		log.Printf("error: can't unmarshal JSON: %s", err)
-	}
-
-	if rsp.Message != "OK" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("error: %s", rsp.Message),
-		})
+	rsp, errRsp := router.walletTrackingSvc.GetTransactionHistory(req)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
 		return
 	}
 
@@ -60,39 +52,37 @@ func (router *Router) getAssetTransfers(c *gin.Context) {
 }
 
 func (router *Router) getBalance(c *gin.Context) {
+	var errRsp *errs.ErrorResponse
+
 	address := c.Query("address")
 	if address == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Address parameter is required",
+		c.JSON(http.StatusBadRequest, &errs.ErrorResponse{
+			Message: "Address parameter is required",
 		})
 		return
 	}
-	url := "https://api.etherscan.io/api?module=account&action=balance&address=" + address + "&tag=latest&apikey=" + router.infra.Config.Etherscan.Token
 
-	resp, err := http.Get(url)
-	if err != nil {
+	rsp, errRsp := router.walletTrackingSvc.GetWalletBalance(address)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
+		return
+	}
+
+	c.JSON(http.StatusOK, rsp)
+}
+
+func (router *Router) getTransactionByTxhash(c *gin.Context) {
+	txhash := c.Query("txhash")
+	if txhash == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("error: can't call etherscan api: %s", err),
+			"message": "txhash parameter is required",
 		})
 		return
 	}
-	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("error: can't read response body: %s", err)
-	}
-
-	var rsp m.BalanceResponse
-	err = json.Unmarshal(body, &rsp)
-	if err != nil {
-		log.Printf("error: can't unmarshal JSON: %s", err)
-	}
-
-	if rsp.Message != "OK" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("error: %s", rsp.Message),
-		})
+	rsp, errRsp := router.walletTrackingSvc.GetTransactionHistoryByTxhash(txhash)
+	if errRsp != nil {
+		c.JSON(errRsp.StatusCode, errRsp)
 		return
 	}
 

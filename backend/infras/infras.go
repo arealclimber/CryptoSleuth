@@ -6,7 +6,7 @@ import (
 	"log"
 	"sleuth/infras/configs"
 	infras_itf "sleuth/infras/interface"
-	"sleuth/models/commons"
+	"sleuth/model/commons"
 	"sleuth/utils"
 
 	"github.com/fsnotify/fsnotify"
