@@ -5,6 +5,7 @@ import (
 
 	svc "sleuth/domain/interface"
 
+	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,6 +28,7 @@ func NewRouter(opts *infras.Options, wtSvc svc.IWalletTrackingSvc) *Router {
 func (router *Router) InitRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(corsMiddleware()) // 使用 CORS 中間件
+	r.Use(gzip.Gzip(gzip.BestSpeed))
 
 	api := r.Group("/")
 	api.GET("/ping", router.ping)

@@ -1,12 +1,18 @@
-h1 {
-	font-size: 100px;
-	font-family: 'Intro', sans-serif;
-	font-weight: 800;
-	text-transform: uppercase;
-	/* Warning: no fallback */
+.centerBall {
+	border-radius: 34.375rem;
+	background: linear-gradient(230deg, #4fa7ec 0%, #fcfeff 49.48%, #8fe3cf 100%);
+}
 
-	background: -webkit-linear-gradient(-86deg, #eef85b 5%, #7aec8d 53%, #09e5c3 91%);
-	-webkit-background-clip: text;
-	-webkit-text-stroke: 4px transparent;
-	color: #232d2d;
+.cashInBall {
+	border-radius: 21.875rem;
+	background: #fff;
+	box-shadow: 0px 0px 40px 0px #65d6bc;
+}
+
+.cashOutBallHoverBg {
+	background: linear-gradient(321deg, #bddff8 13.4%, #fff 83.93%);
+}
+
+.cashInBallHoverBg {
+	background: linear-gradient(139deg, #a8f4e2 14.04%, #fff 84.14%);
 }

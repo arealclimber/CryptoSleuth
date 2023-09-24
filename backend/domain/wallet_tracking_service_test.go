@@ -40,24 +40,6 @@ func init() {
 	}
 }
 
-// create mock repositories
-// @param mockCtl controller
-// @result MockReps model
-func getMockReps(mockCtl *gomock.Controller) mockReps {
-	return mockReps{
-		mockiWalletBalanceExt:           mock.NewMockIWalletBalanceExt(mockCtl),
-		mockiWalletTransationHistoryExt: mock.NewMockIWalletTransationHistoryExt(mockCtl),
-	}
-}
-
-// create new Wallet Tracking service
-// @param cfg config
-// @param mockReps mock reps
-// @result WalletTrackingService model
-func newWalletTrackingService(cfg *configs.Config, mockReps mockReps) svc_interface.IWalletTrackingSvc {
-	return NewWalletTrackingSvc(opts, mockReps.mockiWalletBalanceExt, mockReps.mockiWalletTransationHistoryExt)
-}
-
 // mock repositories struct
 type mockReps struct {
 	mockiWalletBalanceExt           *mock.MockIWalletBalanceExt
@@ -120,7 +102,8 @@ func TestWalletTrackingService_GetTransactionHistory(t *testing.T) {
 	t.Parallel()
 
 	address := "0x00000"
-	mockExtResponse, frequencyRsp := generateFrequencyRsp(address)
+	mockfrequencyExtRsp, frequencyRsp := generateFrequencyRsp(address)
+	mockamountExtRsp, amountRsp := generateAmountRsp(address)
 
 	tests := []struct {
 		name         string
@@ -138,12 +121,30 @@ func TestWalletTrackingService_GetTransactionHistory(t *testing.T) {
 			},
 			mockPrepare: func(f *mockReps) {
 				gomock.InOrder(
-					f.mockiWalletTransationHistoryExt.EXPECT().GetWalletTransactionHistory(gomock.Any(), address).Return(mockExtResponse, nil),
+					f.mockiWalletTransationHistoryExt.EXPECT().GetWalletTransactionHistory(gomock.Any(), address).Return(mockfrequencyExtRsp, nil),
 				)
 			},
 			wantResponse: &m_router.Response{
 				BaseResp: m_router.BaseResp{Type: "frequency", Message: "OK"},
 				Result:   frequencyRsp,
+			},
+			wantErr: nil,
+		},
+		{
+			name: "TestAmountType",
+			req: m_router.TransationHistoryReq{
+				Address:   address,
+				TimeRange: 60,
+				Type:      "amount",
+			},
+			mockPrepare: func(f *mockReps) {
+				gomock.InOrder(
+					f.mockiWalletTransationHistoryExt.EXPECT().GetWalletTransactionHistory(gomock.Any(), address).Return(mockamountExtRsp, nil),
+				)
+			},
+			wantResponse: &m_router.Response{
+				BaseResp: m_router.BaseResp{Type: "amount", Message: "OK"},
+				Result:   amountRsp,
 			},
 			wantErr: nil,
 		},
@@ -167,11 +168,38 @@ func TestWalletTrackingService_GetTransactionHistory(t *testing.T) {
 
 }
 
+// region private functions
+
+// create new Wallet Tracking service
+// @param cfg config
+// @param mockReps mock reps
+// @result WalletTrackingService model
+func newWalletTrackingService(cfg *configs.Config, mockReps mockReps) svc_interface.IWalletTrackingSvc {
+	return NewWalletTrackingSvc(opts, mockReps.mockiWalletBalanceExt, mockReps.mockiWalletTransationHistoryExt)
+}
+
+// create mock repositories
+// @param mockCtl controller
+// @result MockReps model
+func getMockReps(mockCtl *gomock.Controller) mockReps {
+	return mockReps{
+		mockiWalletBalanceExt:           mock.NewMockIWalletBalanceExt(mockCtl),
+		mockiWalletTransationHistoryExt: mock.NewMockIWalletTransationHistoryExt(mockCtl),
+	}
+}
+
 func generateFrequencyRsp(address string) (*m_ext.TransactionResponse, []m_domain_tx_his.FrequencyType) {
 	mockExtResponse := generateMockTransactionResponse(address)
 	convertedResponse := m_domain_tx_his.ConvertRspToSvcModel(mockExtResponse)
 	convertedResponse.FilterTransactionsWithinTimeRange(60)
 	return mockExtResponse, convertedResponse.FindTopFiveTransactionsByFrequency(address)
+}
+
+func generateAmountRsp(address string) (*m_ext.TransactionResponse, []m_domain_tx_his.AmountType) {
+	mockExtResponse := generateMockTransactionResponse(address)
+	convertedResponse := m_domain_tx_his.ConvertRspToSvcModel(mockExtResponse)
+	convertedResponse.FilterTransactionsWithinTimeRange(60)
+	return mockExtResponse, convertedResponse.FindTopFiveTransactionsByAmount(address)
 }
 
 func generateMockTransactionResponse(address string) *m_ext.TransactionResponse {
@@ -204,3 +232,5 @@ func randomChoiceTo() string {
 		return "address3"
 	}
 }
+
+// endregion
