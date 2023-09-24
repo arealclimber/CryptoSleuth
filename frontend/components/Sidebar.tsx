@@ -104,14 +104,16 @@ const Sidebar = () => {
 			{/* <!-- drawer component --> */}
 			{show && (
 				<div
-					className="fixed inset-0 bg-black opacity-50 z-10"
+					className="fixed inset-0 translate-y-[4.4rem] bg-black opacity-50 z-10"
 					onClick={toggleDrawer} // Close the drawer when clicking on the background
 				></div>
 			)}
 			<div dir="ltr">
 				<div
 					id="drawer-navigation"
-					className={`fixed top-0 right-0 z-40 w-[30.4375rem] border-s-[0.3rem] border-blue h-screen p-4 overflow-y-auto transition-transform duration-300 bg-white ${
+					className={`fixed top-0 translate-y-[4.35rem] ${
+						show ? `shadow-sm shadow-black` : ``
+					} right-0 z-40 w-[30.4375rem] border-s-[0.3rem] border-blue h-screen p-4 overflow-y-auto transition-transform duration-300 bg-white ${
 						show ? 'translate-x-0' : ' translate-x-[99.1%]'
 					}`}
 					aria-labelledby="drawer-navigation-label"
