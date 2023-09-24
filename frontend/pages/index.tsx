@@ -27,6 +27,7 @@ import Toast from '../components/Toast';
 import CashOutBall from '../components/CashOutBall';
 import CashInBall from '../components/CashInBall';
 import axios from 'axios';
+import Sidebar from '../components/Sidebar';
 
 const w = 'w-[20.625rem]';
 const h = 'h-[20.625rem]';
@@ -92,6 +93,7 @@ const Home = () => {
 
 	return (
 		<div className="">
+			<Sidebar />
 			<div className="py-5 px-10 w-[500px]">
 				<Link href="#">
 					<Image

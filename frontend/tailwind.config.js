@@ -112,6 +112,9 @@ module.exports = {
 					250: '#94CBF4',
 					350: '#6CB6EF',
 				},
+				green: {
+					DEFAULT: '#65D6BC',
+				},
 			},
 		},
 	},
