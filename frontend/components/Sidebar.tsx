@@ -1,21 +1,23 @@
 import React from 'react';
+import useGlobalStore from '../store/basic';
 
 interface ISidebarItem {
 	toggleDrawer: () => void;
 	title: string;
 	content: string;
-	isEarliest: boolean;
-	isLastest: boolean;
+	isEarliest?: boolean;
+	isLastest?: boolean;
 }
 
 const SidebarItem = ({
 	toggleDrawer,
 	title,
 	content,
-	isEarliest,
-	isLastest,
+	isEarliest = false,
+	isLastest = false,
 }: ISidebarItem) => {
 	const circleColor = isLastest ? 'bg-green' : 'bg-blue-150';
+
 	return (
 		<>
 			{isLastest && (
@@ -70,20 +72,18 @@ const SidebarItem = ({
 
 const Sidebar = () => {
 	const [show, setShow] = React.useState(false);
+	const [histories] = useGlobalStore(state => [state.histories]);
 
 	const toggleDrawer = () => {
+		console.log('histories in SideBar', histories);
 		setShow(prev => {
-			console.log('!prev', !prev);
 			return !prev;
 		});
 	};
 
-	const title = '0x18a...53a4a';
-	const content = '0x18a4489a739ac9835da14e006b35d65040e53a4a';
-
 	return (
 		<div>
-			{/* drawer button */}
+			{/* -----drawer button----- */}
 			<div
 				className={`fixed right-0 top-1/3 transform transition-transform duration-300 ${
 					show ? 'translate-x-[-30.4375rem]' : 'translate-x-0'
@@ -104,17 +104,17 @@ const Sidebar = () => {
 			{/* <!-- drawer component --> */}
 			{show && (
 				<div
-					className="fixed inset-0 translate-y-[4.4rem] bg-black opacity-50 z-10"
+					className="fixed inset-0 translate-y-[0rem] bg-black opacity-50 z-10"
 					onClick={toggleDrawer} // Close the drawer when clicking on the background
 				></div>
 			)}
 			<div dir="ltr">
 				<div
 					id="drawer-navigation"
-					className={`fixed top-0 translate-y-[4.35rem] ${
+					className={`fixed top-0 translate-y-[0rem] ${
 						show ? `shadow-sm shadow-black` : ``
 					} right-0 z-40 w-[30.4375rem] border-s-[0.3rem] border-blue h-screen p-4 overflow-y-auto transition-transform duration-300 bg-white ${
-						show ? 'translate-x-0' : ' translate-x-[99.1%]'
+						show ? 'translate-x-0' : 'translate-x-[99.1%]'
 					}`}
 					aria-labelledby="drawer-navigation-label"
 				>
@@ -125,38 +125,29 @@ const Sidebar = () => {
 						Menu
 					</h5> */}
 
-					<div className="py-4 overflow-y-auto">
-						<ul className="space-y-0 font-medium">
-							<SidebarItem
-								title={title}
-								content={content}
-								toggleDrawer={toggleDrawer}
-								isEarliest={false}
-								isLastest={true}
-							/>
-							<SidebarItem
-								title={title}
-								content={content}
-								toggleDrawer={toggleDrawer}
-								isEarliest={false}
-								isLastest={false}
-							/>
-							<SidebarItem
-								title={title}
-								content={content}
-								toggleDrawer={toggleDrawer}
-								isEarliest={false}
-								isLastest={false}
-							/>
-							<SidebarItem
-								title={title}
-								content={content}
-								toggleDrawer={toggleDrawer}
-								isEarliest={true}
-								isLastest={false}
-							/>
-						</ul>
-					</div>
+					{histories.length > 0 ? (
+						<div className="py-4 overflow-y-auto">
+							<ul className="space-y-0 font-medium">
+								{histories.map((history, index) => {
+									console.log('history', history, 'index', index);
+									return (
+										<SidebarItem
+											key={index}
+											title={history.walletTitle}
+											content={history.walletContent}
+											toggleDrawer={toggleDrawer}
+											isLastest={index === 0}
+											isEarliest={index === histories.length - 1}
+										/>
+									);
+								})}
+							</ul>
+						</div>
+					) : (
+						<div className="flex justify-center items-center h-full text-gray-750 text-lg font-normal">
+							No information
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

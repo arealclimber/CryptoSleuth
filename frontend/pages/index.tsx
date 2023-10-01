@@ -28,42 +28,64 @@ import CashOutBall from '../components/CashOutBall';
 import CashInBall from '../components/CashInBall';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
+import {ethers} from 'ethers';
+import {getTimestamp} from '../utils/common';
 
 const w = 'w-[20.625rem]';
 const h = 'h-[20.625rem]';
 
 const Home = () => {
-	const [wallet, setWallet, balance] = useGlobalStore(state => [
-		state.wallet,
-		state.setWallet,
-		state.balance,
-	]);
+	const [wallet, setWallet, balance, histories, setHistories] = useGlobalStore(
+		state => [
+			state.wallet,
+			state.setWallet,
+			state.balance,
+			state.histories,
+			state.setHistories,
+		]
+	);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [walletHistories, setWalletHistories] = useState(Array<ITransaction>);
 	const [loading, setLoading] = useState<boolean>(false);
-	const [visible, setVisible] = useState(false);
+	const [toastVisible, setToastVisible] = useState(false);
 
 	const btnClickHandler = () => {
-		setVisible(false);
+		setToastVisible(false);
+	};
+
+	const validateAddress = (address: string): boolean => {
+		const valid = ethers.isAddress(address);
+		console.log('address', address, 'rs', valid);
+		return valid;
 	};
 
 	// TODO: get the balance of targeted address
 	const fetcher = async (url: string, config?: any): Promise<any> => {
+		let response;
+
 		try {
-			const response = await axios(url, config);
+			response = await axios(url, config);
 			console.log('res', response.data);
-			return response.data;
 		} catch (err) {
 			console.error('error', err);
 			throw err;
 		}
+
+		return response.data;
 	};
 
 	const searchClickHandler = async () => {
-		setWallet('');
 		setLoading(true);
-		setVisible(true);
+
+		setWallet('');
+		setToastVisible(true);
+
+		const validAddress = validateAddress(inputRef.current?.value || '');
+		if (!validAddress) {
+			setLoading(false);
+			return;
+		}
 
 		const data = await fetcher(`/api/proxy?address=${inputRef.current?.value}`);
 
@@ -78,9 +100,23 @@ const Home = () => {
 		// TODO: validate the address
 		if (inputRef.current?.value) {
 			if (data?.message === 'OK') {
+				console.log('wallet from Zustand in index', wallet);
+
+				const walletTitle =
+					inputRef.current?.value.slice(0, 4) +
+					'...' +
+					inputRef.current?.value.slice(-5);
+				const now = getTimestamp();
+
+				setHistories([
+					{
+						walletTitle: walletTitle,
+						walletContent: inputRef.current?.value,
+						searchAt: now,
+					},
+				]);
 				setWalletHistories(data.result);
 				setWallet(inputRef.current.value);
-				console.log('wallet from Zustand in index', wallet);
 			} else {
 				setWalletHistories([]);
 			}
@@ -94,7 +130,7 @@ const Home = () => {
 	return (
 		<div className="">
 			<Sidebar />
-			<div className="py-5 px-10 w-[500px]">
+			<div className="py-5 px-10 w-[500px] z-20">
 				<Link href="#">
 					<Image
 						className="hover:opacity-80 transition-all duration-300"
@@ -107,7 +143,7 @@ const Home = () => {
 			</div>
 
 			{/* <InfoModal visible={visible} btnClickHandler={btnClickHandler} /> */}
-			{wallet && <Toast visible={visible} btnClickHandler={btnClickHandler} />}
+			{wallet && <Toast visible={toastVisible} btnClickHandler={btnClickHandler} />}
 
 			<div className="w-full h-[400px] bg-[url('/elements/banner.svg')]">
 				<div className="flex flex-col justify-start space-y-6 items-center bg-cover bg-center container">

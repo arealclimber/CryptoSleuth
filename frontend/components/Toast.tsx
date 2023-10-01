@@ -33,9 +33,9 @@ const Toast = ({visible, btnClickHandler}: IToast) => {
 											<path
 												d="M17 17.5L2 2.5M17 2.5L2 17.5"
 												stroke="white"
-												stroke-width="3"
-												stroke-linecap="round"
-												stroke-linejoin="round"
+												strokeWidth="3"
+												strokeLinecap="round"
+												strokeLinejoin="round"
 											/>
 										</svg>
 									</button>
