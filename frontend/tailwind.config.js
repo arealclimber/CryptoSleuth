@@ -12,6 +12,7 @@ module.exports = {
 			margin: {
 				DEFAULT: '0',
 			},
+
 			padding: {
 				DEFAULT: '9.75rem',
 				// sm: '156px',
@@ -46,6 +47,14 @@ module.exports = {
 			},
 		},
 		extend: {
+			zIndex: {
+				'10': '10',
+				'20': '20',
+				'30': '30',
+				'40': '40',
+				'50': '50',
+				'60': '60',
+			},
 			boxShadow: {
 				'innerCustom': '0px 0px 20px 0px rgba(0, 0, 0, 0.15) inset',
 				'cashInGreen': '0px 0px 40px 0px #65D6BC',

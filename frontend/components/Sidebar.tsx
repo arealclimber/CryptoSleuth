@@ -75,7 +75,7 @@ const Sidebar = () => {
 	const [histories] = useGlobalStore(state => [state.histories]);
 
 	const toggleDrawer = () => {
-		console.log('histories in SideBar', histories);
+		// console.log('histories in SideBar', histories);
 		setShow(prev => {
 			return !prev;
 		});
@@ -111,7 +111,7 @@ const Sidebar = () => {
 			<div dir="ltr">
 				<div
 					id="drawer-navigation"
-					className={`fixed top-0 translate-y-[0rem] ${
+					className={`fixed top-0 translate-y-[0rem] z-50 ${
 						show ? `shadow-sm shadow-black` : ``
 					} right-0 z-40 w-[30.4375rem] border-s-[0.3rem] border-blue h-screen p-4 overflow-y-auto transition-transform duration-300 bg-white ${
 						show ? 'translate-x-0' : 'translate-x-[99.1%]'

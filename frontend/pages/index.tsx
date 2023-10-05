@@ -18,7 +18,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, {useRef, useState} from 'react';
 import {ITransaction} from '../interfaces/transactions';
-import useGlobalStore from '../store/basic';
+import useGlobalStore, {
+	SearchString,
+	SearchType,
+	TimeRange,
+	TimeString,
+} from '../store/basic';
 import CenterBall from '../components/CenterBall';
 import {API_URL} from '../config/api';
 import Dropdown from '../components/Dropdown';
@@ -29,26 +34,75 @@ import CashInBall from '../components/CashInBall';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import {ethers} from 'ethers';
-import {getTimestamp} from '../utils/common';
+import {getTimestamp, truncateString, weiToEth} from '../utils/common';
 
 const w = 'w-[20.625rem]';
 const h = 'h-[20.625rem]';
 
 const Home = () => {
-	const [wallet, setWallet, balance, histories, setHistories] = useGlobalStore(
-		state => [
-			state.wallet,
-			state.setWallet,
-			state.balance,
-			state.histories,
-			state.setHistories,
-		]
-	);
+	const [
+		wallet,
+		setWallet,
+		balance,
+		setBalance,
+		histories,
+		setHistories,
+		searchType,
+		setSearchType,
+		timeRange,
+		setTimeRange,
+	] = useGlobalStore(state => [
+		state.wallet,
+		state.setWallet,
+		state.balance,
+		state.setBalance,
+		state.histories,
+		state.setHistories,
+		state.searchType,
+		state.setSearchType,
+		state.timeRange,
+		state.setTimeRange,
+	]);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [walletHistories, setWalletHistories] = useState(Array<ITransaction>);
 	const [loading, setLoading] = useState<boolean>(false);
+	// const [searchType, setSearchType] = useState<SearchType>(SearchType.amount);
+	// const [timeRange, setTimeRange] = useState<TimeRange>(
+	// 	TimeRange.fiveMinutes
+	// );
 	const [toastVisible, setToastVisible] = useState(false);
+
+	const getTimeRange = (range: string) => {
+		const timeString = TimeString[range as keyof typeof TimeString];
+		if (timeString) {
+			const range = TimeRange[timeString];
+			setTimeRange(range);
+		}
+		// switch (range) {
+		// 	case '1 minute':
+		// 		return TimeRange.oneMinute;
+		// 	case '5 minutes':
+		// 		return TimeRange.fiveMinutes;
+		// 	case '30 minutes':
+		// 		return TimeRange.thirtyMinutes;
+		// 	case '1 hour':
+		// 		return TimeRange.oneHour;
+		// 	default:
+		// 		return TimeRange.fiveMinutes;
+		// }
+	};
+
+	const getFilterType = (item: string) => {
+		console.log('getFilterType', item);
+		const typeString = SearchString[item as keyof typeof SearchString];
+		if (typeString) {
+			const type = SearchType[typeString];
+			console.log('type', type);
+
+			setSearchType(type);
+		}
+	};
 
 	const btnClickHandler = () => {
 		setToastVisible(false);
@@ -76,55 +130,76 @@ const Home = () => {
 	};
 
 	const searchClickHandler = async () => {
-		setLoading(true);
+		console.log('searchClickHandler');
+		try {
+			setLoading(true);
 
-		setWallet('');
-		setToastVisible(true);
+			setWallet('');
+			setToastVisible(true);
 
-		const validAddress = validateAddress(inputRef.current?.value || '');
-		if (!validAddress) {
-			setLoading(false);
-			return;
-		}
-
-		const data = await fetcher(`/api/proxy?address=${inputRef.current?.value}`);
-
-		// TODO: balance hasn't done yet
-		// FIXME: There's error calling http API request
-		const balance = await fetcher(
-			`http://54.199.12.7:8070/wallet/balance?address=${inputRef.current?.value}`
-		);
-
-		console.log('balance', balance);
-
-		// TODO: validate the address
-		if (inputRef.current?.value) {
-			if (data?.message === 'OK') {
-				console.log('wallet from Zustand in index', wallet);
-
-				const walletTitle =
-					inputRef.current?.value.slice(0, 4) +
-					'...' +
-					inputRef.current?.value.slice(-5);
-				const now = getTimestamp();
-
-				setHistories([
-					{
-						walletTitle: walletTitle,
-						walletContent: inputRef.current?.value,
-						searchAt: now,
-					},
-				]);
-				setWalletHistories(data.result);
-				setWallet(inputRef.current.value);
-			} else {
-				setWalletHistories([]);
+			const validAddress = validateAddress(inputRef.current?.value || '');
+			if (!validAddress) {
+				setLoading(false);
+				return;
 			}
-		}
 
-		setTimeout(() => {
+			// const data = await fetcher(`/api/proxy?address=${inputRef.current?.value}`);
+			const data = await fetcher(
+				`http://54.199.12.7:8070/wallet/transaction/history?address=${inputRef.current?.value}&time_range=${timeRange}&type=${searchType}
+			`
+			);
+
+			console.log('histories', histories);
+
+			// TODO: balance hasn't done yet
+			// FIXME: There's error calling http API request
+			const balanceData = await fetcher(
+				`http://54.199.12.7:8070/wallet/balance?address=${inputRef.current?.value}`
+			);
+
+			console.log('balance', balanceData);
+
+			// TODO: validate the address
+			if (inputRef.current?.value) {
+				if (data?.message === 'OK') {
+					console.log('wallet from Zustand in index', wallet);
+
+					const walletTitle =
+						inputRef.current?.value.slice(0, 4) +
+						'...' +
+						inputRef.current?.value.slice(-5);
+					const now = getTimestamp();
+
+					setHistories([
+						{
+							walletTitle: walletTitle,
+							walletContent: inputRef.current?.value,
+							searchAt: now,
+						},
+					]);
+					setWalletHistories(data.result);
+					setWallet(inputRef.current.value);
+				} else {
+					setWalletHistories([]);
+				}
+			}
+
+			if (balanceData?.message === 'OK') {
+				console.log(
+					'balanceData',
+					balanceData,
+					'balanceData.result',
+					balanceData.result
+				);
+
+				const eth = weiToEth(balanceData.result);
+				setBalance(eth);
+			}
+		} catch (error) {
+			console.log('error', error);
+		} finally {
 			setLoading(false);
-		}, 500);
+		}
 	};
 
 	return (
@@ -201,11 +276,13 @@ const Home = () => {
 						<Dropdown
 							title="Select time"
 							items={['1 minute', '5 minutes', '30 minutes', '1 hour']}
+							getActiveItem={getTimeRange}
 						/>
 
 						<Dropdown
 							title="Select variable"
 							items={['Highest amount', 'Most frequently']}
+							getActiveItem={getFilterType}
 						/>
 					</div>
 				</div>
@@ -218,7 +295,7 @@ const Home = () => {
 						className="bg-white rounded-3xl mx-10 p-10 min-h-40 w-4/5 xl:max-w-[1128px]"
 						style={{boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)'}}
 					>
-						<div className="text-[32px] font-bold">iven.eth</div>
+						<div className="text-[32px] font-bold">{truncateString(wallet)}</div>
 						<div className="flex space-x-3">
 							<div className="">
 								{wallet}
@@ -249,9 +326,7 @@ const Home = () => {
 											height={32}
 										/>
 									</div>{' '}
-									<div className="font-bold text-lg lg:text-2xl">
-										3,844.653070438940336094 ETH
-									</div>
+									<div className="font-bold text-lg lg:text-2xl">{balance} ETH</div>
 								</div>
 							</div>
 
