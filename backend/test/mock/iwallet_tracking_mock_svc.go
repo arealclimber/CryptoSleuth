@@ -70,10 +70,10 @@ func (mr *MockIWalletTrackingSvcMockRecorder) GetTransactionHistoryByTxhash(arg0
 }
 
 // GetWalletBalance mocks base method.
-func (m *MockIWalletTrackingSvc) GetWalletBalance(arg0 string) (*router.Response, *errs.ErrorResponse) {
+func (m *MockIWalletTrackingSvc) GetWalletBalance(arg0 string) (*router.BalanceRsp, *errs.ErrorResponse) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetWalletBalance", arg0)
-	ret0, _ := ret[0].(*router.Response)
+	ret0, _ := ret[0].(*router.BalanceRsp)
 	ret1, _ := ret[1].(*errs.ErrorResponse)
 	return ret0, ret1
 }

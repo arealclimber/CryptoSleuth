@@ -8,5 +8,11 @@ type BaseResp struct {
 
 type Response struct {
 	BaseResp
-	Result interface{} `json:"result"`
+	Result string `json:"result"`
+}
+
+type ExchangeRateRsp struct {
+	Ethereum struct {
+		USD float64 `json:"usd"`
+	} `json:"ethereum"`
 }

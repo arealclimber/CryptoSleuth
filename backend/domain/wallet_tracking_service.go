@@ -2,11 +2,13 @@ package domain
 
 import (
 	"context"
+	"math/big"
 	svc_interface "sleuth/domain/interface"
 	"sleuth/infras"
 	m_domain_tx_his "sleuth/model/domain/transaction_history"
 	m_router "sleuth/model/router"
 	rep "sleuth/repository/interface"
+	"sleuth/utils"
 	"sleuth/utils/errs"
 	"time"
 )
@@ -28,23 +30,36 @@ func NewWalletTrackingSvc(opts *infras.Options, wbExt rep.IWalletBalanceExt, thE
 }
 
 // GetWalletBalance is a function that returns the balance of a wallet
-func (wts WalletTrackingSvc) GetWalletBalance(address string) (*m_router.Response, *errs.ErrorResponse) {
+func (wts WalletTrackingSvc) GetWalletBalance(address string) (*m_router.BalanceRsp, *errs.ErrorResponse) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), wts.ExternalTimeout*time.Second)
 	defer cancel()
 
-	rsp, errRsp := wts.WalletBalanceExt.GetWalletBalance(ctx, address)
+	balanceRsp, errRsp := wts.WalletBalanceExt.GetWalletBalance(ctx, address)
 	if errRsp != nil {
 		errRsp.Message = "Error while getting wallet balance from external API"
 		return nil, errRsp
 	}
-	return &m_router.Response{
+
+	usdStr := ""
+	exchangeRate, errRsp := wts.WalletBalanceExt.GetETHtoUSDExchangeRate(ctx)
+	if errRsp == nil {
+		eth := utils.ConvertWeiToEther(balanceRsp.Result)
+		usd := new(big.Float).SetFloat64(exchangeRate.Ethereum.USD)
+		usd.Mul(usd, eth)
+		usdStr = usd.Text('f', 18)
+	}
+
+	return &m_router.BalanceRsp{
 		BaseResp: m_router.BaseResp{
-			Status:  rsp.Status,
-			Type:    rsp.Type,
-			Message: rsp.Message,
+			Status:  balanceRsp.Status,
+			Type:    balanceRsp.Type,
+			Message: balanceRsp.Message,
 		},
-		Result: rsp.Result,
+		Result: m_router.BalanceModel{
+			Wei: balanceRsp.Result,
+			USD: usdStr,
+		},
 	}, nil
 }
 

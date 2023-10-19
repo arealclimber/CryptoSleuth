@@ -49,3 +49,23 @@ func (wbExt *WalletBalanceExt) GetWalletBalance(ctx context.Context, address str
 
 	return &rsp, nil
 }
+
+func (wbExt *WalletBalanceExt) GetETHtoUSDExchangeRate(ctx context.Context) (*m.ExchangeRateRsp, *errs.ErrorResponse) {
+	url := "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+
+	body, err := utils.Request(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, &errs.ErrorResponse{
+			StatusCode: http.StatusInternalServerError,
+			Message:    fmt.Sprintf("error: can't call etherscan api: %s", err),
+		}
+	}
+
+	var rsp m.ExchangeRateRsp
+	err = json.Unmarshal(body, &rsp)
+	if err != nil {
+		log.Printf("error: can't unmarshal JSON: %s", err)
+	}
+
+	return &rsp, nil
+}

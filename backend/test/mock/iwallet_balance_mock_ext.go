@@ -40,6 +40,21 @@ func (m *MockIWalletBalanceExt) EXPECT() *MockIWalletBalanceExtMockRecorder {
 	return m.recorder
 }
 
+// GetETHtoUSDExchangeRate mocks base method.
+func (m *MockIWalletBalanceExt) GetETHtoUSDExchangeRate(arg0 context.Context) (*repository.ExchangeRateRsp, *errs.ErrorResponse) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetETHtoUSDExchangeRate", arg0)
+	ret0, _ := ret[0].(*repository.ExchangeRateRsp)
+	ret1, _ := ret[1].(*errs.ErrorResponse)
+	return ret0, ret1
+}
+
+// GetETHtoUSDExchangeRate indicates an expected call of GetETHtoUSDExchangeRate.
+func (mr *MockIWalletBalanceExtMockRecorder) GetETHtoUSDExchangeRate(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetETHtoUSDExchangeRate", reflect.TypeOf((*MockIWalletBalanceExt)(nil).GetETHtoUSDExchangeRate), arg0)
+}
+
 // GetWalletBalance mocks base method.
 func (m *MockIWalletBalanceExt) GetWalletBalance(arg0 context.Context, arg1 string) (*repository.Response, *errs.ErrorResponse) {
 	m.ctrl.T.Helper()
