@@ -27,6 +27,9 @@ type ServerConfig struct {
 	CtxDefaultTimeout time.Duration
 	ExternalTimeout   time.Duration
 	Debug             bool
+	UseTls            bool
+	CertFile string
+	KeyFile string
 }
 
 // Logger config

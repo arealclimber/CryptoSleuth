@@ -7,6 +7,9 @@ server:
   CtxDefaultTimeout: 3
   ExternalTimeout : 3
   Debug: true
+  UseTls: false
+  CertFile: "./ssl/server.crt"
+  KeyFile: "./ssl/server.key"
 
 logger:
   Development: true
