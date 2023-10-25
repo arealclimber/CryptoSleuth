@@ -87,7 +87,7 @@ const Sidebar = () => {
 			<div
 				className={`fixed right-0 top-1/3 transform transition-transform duration-300 ${
 					show ? 'translate-x-[-30.4375rem]' : 'translate-x-0'
-				} z-50 `}
+				} z-80 `}
 			>
 				<button
 					className="text-white bg-blue-350 transition-all duration-300 font-medium rounded-tl-lg rounded-bl-lg text-base px-[1rem] py-[1.5rem]"
@@ -104,16 +104,16 @@ const Sidebar = () => {
 			{/* <!-- drawer component --> */}
 			{show && (
 				<div
-					className="fixed inset-0 translate-y-[0rem] bg-black opacity-50 z-10"
+					className="fixed inset-0 translate-y-[0rem] bg-black opacity-50 z-60"
 					onClick={toggleDrawer} // Close the drawer when clicking on the background
 				></div>
 			)}
 			<div dir="ltr">
 				<div
 					id="drawer-navigation"
-					className={`fixed top-0 translate-y-[0rem] z-50 ${
+					className={`fixed top-0 translate-y-[0rem] ${
 						show ? `shadow-sm shadow-black` : ``
-					} right-0 z-40 w-[30.4375rem] border-s-[0.3rem] border-blue h-screen p-4 overflow-y-auto transition-transform duration-300 bg-white ${
+					} right-0 z-60 w-[30.4375rem] border-s-[0.3rem] border-blue h-screen p-4 overflow-y-auto transition-transform duration-300 bg-white ${
 						show ? 'translate-x-0' : 'translate-x-[99.1%]'
 					}`}
 					aria-labelledby="drawer-navigation-label"

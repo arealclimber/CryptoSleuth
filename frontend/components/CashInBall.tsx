@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import InfoModal from './InfoModal';
+import {truncateString} from '../utils/common';
 
 interface ICashInBall {
 	w: string;
@@ -130,8 +131,11 @@ const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
 						</div>
 					</div>
 				) : (
-					<div className="flex flex-col justify-center items-center">
-						<p className="">{content}</p>
+					<div className="flex flex-col justify-center items-center text-xs space-y-3">
+						<p className="text-sm font-bold">
+							{title.includes('eth') ? title : truncateString(title)}
+						</p>
+						<p className="text-gray-750">{truncateString(content)}</p>
 						<p className="">{remark}</p>
 					</div>
 				)}

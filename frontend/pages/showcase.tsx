@@ -35,9 +35,16 @@ import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import {ethers} from 'ethers';
 import {getTimestamp, truncateString, weiToEth} from '../utils/common';
-import {h, w} from '../config/config';
+import {
+	DEFAULT_WALLET,
+	DEFAULT_WALLET_1,
+	DEFAULT_WALLET_2,
+	RADIUS,
+	h,
+	w,
+} from '../config/config';
 
-const Home = () => {
+const Showcase = () => {
 	const [
 		wallet,
 		setWallet,
@@ -351,36 +358,38 @@ const Home = () => {
 
 			{/* ---Ball Section--- */}
 			<div className="mt-16 container">
-				{wallet ? (
-					<div className="flex justify-center">
-						{/* 轉出的球 */}
-						<div className="-mr-[10rem]">
-							<CashOutBall
-								w={w}
-								h={h}
-								title={`0123abcx`}
-								content="asljdfnlas"
-								remark="0.55 ETH / $19,463 "
-							/>
-						</div>
-
-						<div className="mt-[12rem] w-[31.25rem]">
-							{' '}
-							<CenterBall title={wallet} content={wallet} />
-						</div>
-
-						{/* 轉入的球 */}
-						<div className="ml-[4rem] mt-[20rem]">
-							<CashInBall
-								w={w}
-								h={h}
-								title={`0123abcx`}
-								content="asljdfnlas"
-								remark="0.55 ETH / $19,463 "
-							/>
-						</div>
+				<div className="flex justify-center">
+					{/* 轉出的球 */}
+					<div className="-mr-[10rem] z-20">
+						<CashOutBall
+							w={w}
+							h={h}
+							title={DEFAULT_WALLET_1}
+							content={DEFAULT_WALLET_1}
+							remark="0.55 ETH / $19,463 "
+						/>
 					</div>
-				) : null}
+
+					<div className="mt-[12rem] w-[31.25rem] z-10">
+						{' '}
+						<CenterBall
+							title={wallet ? wallet : DEFAULT_WALLET}
+							content={wallet ? wallet : DEFAULT_WALLET}
+						/>
+					</div>
+
+					{/* 轉入的球 */}
+					<div className="ml-[4rem] mt-[20rem] z-0">
+						<CashInBall
+							w={`w-[15rem]`}
+							h={`h-[15rem]`}
+							title={DEFAULT_WALLET_2}
+							content={DEFAULT_WALLET_2}
+							remark="0.55 ETH / $19,463 "
+						/>
+					</div>
+				</div>
+
 				{/* {walletHistories.map((history, index) => {
 					return (
 						<div
@@ -428,4 +437,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default Showcase;

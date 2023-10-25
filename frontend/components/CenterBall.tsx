@@ -1,11 +1,13 @@
 import React from 'react';
+import {truncateString} from '../utils/common';
 
 interface ICenterBall {
-	text: string;
+	title: string;
+	content: string;
 }
 
 // TODO: font size
-const CenterBall = ({text}: ICenterBall) => {
+const CenterBall = ({title, content}: ICenterBall) => {
 	// TODO: Dynamically change the ring
 	const w = 'w-[36rem]';
 	const h = 'h-[36rem]';
@@ -25,7 +27,13 @@ const CenterBall = ({text}: ICenterBall) => {
 					<div className="flex items-center justify-center">
 						{/* 白色內圓 */}
 						<span className="flex items-center justify-center shadow-innerCustom bg-white rounded-full w-[28rem] h-[28rem] z-0">
-							{text}
+							<div className="flex flex-col justify-center items-center space-y-5">
+								<p className="text-2xl font-bold">
+									{' '}
+									{title.includes('eth') ? title : truncateString(title)}
+								</p>
+								<p className="text-sm text-gray-750"> {content}</p>
+							</div>
 						</span>
 					</div>
 				</div>

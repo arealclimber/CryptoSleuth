@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import InfoModal from './InfoModal';
+import {truncateString} from '../utils/common';
 
 interface ICashOutBall {
 	w: string;
@@ -10,7 +11,9 @@ interface ICashOutBall {
 }
 
 const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
-	// TODO: 把 w-[] h-[] 改成 props
+	const radius = w.split('-')[1];
+	console.log('radius', radius);
+
 	const [hoveredBall, setHoveredBall] = useState(false);
 	const [hoveredMagnifier, setHoveredMagnifier] = useState(false);
 	const [hoveredEye, setHoveredEye] = useState(false);
@@ -150,9 +153,11 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 										</div>
 									</div>
 								) : (
-									<div className="flex flex-col justify-center items-center">
-										<p className="">{title}</p>
-										<p className="">{content}</p>
+									<div className="flex flex-col justify-center items-center text-xs space-y-3">
+										<p className="text-sm font-bold">
+											{title.includes('eth') ? title : truncateString(title)}
+										</p>
+										<p className="text-gray-750">{truncateString(content)}</p>
 										<p className="">{remark}</p>
 									</div>
 								)}
