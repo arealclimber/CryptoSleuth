@@ -110,7 +110,7 @@ const Showcase = () => {
 	};
 
 	const btnClickHandler = () => {
-		setToastVisible(false);
+		setToastVisible(prev => !prev);
 	};
 
 	const validateAddress = (address: string): boolean => {
@@ -231,7 +231,8 @@ const Showcase = () => {
 			</div>
 
 			{/* <InfoModal visible={visible} btnClickHandler={btnClickHandler} /> */}
-			{wallet && <Toast visible={toastVisible} btnClickHandler={btnClickHandler} />}
+			{/* {wallet && <Toast visible={toastVisible} btnClickHandler={btnClickHandler} />} */}
+			<Toast visible={toastVisible} btnClickHandler={btnClickHandler} />
 
 			<div className="w-full h-[400px] bg-[url('/elements/banner.svg')]">
 				<div className="flex flex-col justify-start space-y-6 items-center bg-cover bg-center container">
@@ -256,7 +257,8 @@ const Showcase = () => {
 
 						<button
 							disabled={loading}
-							onClick={searchClickHandler}
+							// onClick={searchClickHandler}
+							onClick={btnClickHandler}
 							className="w-[150px] flex justify-center items-center px-10 py-2 border-white border-[3px] bg-transparent rounded-xl text-[20px] text-white hover:text-primary-500 hover:bg-white transition-all duration-300 disabled:text-primary-500 disabled:bg-white"
 						>
 							{loading ? (
@@ -302,57 +304,58 @@ const Showcase = () => {
 			</div>
 
 			{/* ---Card--- */}
-			{wallet ? (
-				<div className="flex justify-center mt-16 w-full">
-					<div
-						className="bg-white rounded-3xl mx-10 p-10 min-h-40 w-4/5 xl:max-w-[1128px]"
-						style={{boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)'}}
-					>
-						<div className="text-[32px] font-bold">{truncateString(wallet)}</div>
-						<div className="flex space-x-3">
-							<div className="">
-								{wallet}
-								{/* {targetAddress} */}
-							</div>
-							<div className="">
-								<Image
-									className="hover:cursor-pointer"
-									src="elements/copy_icon.svg"
-									alt="icon"
-									width={24}
-									height={24}
-								/>
+
+			<div className="flex justify-center mt-16 container">
+				<div
+					className="bg-white rounded-3xl mx-0 p-10 min-h-40 w-full"
+					style={{boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)'}}
+				>
+					<div className="text-[32px] font-bold">
+						{wallet ? wallet : DEFAULT_WALLET}
+					</div>
+					<div className="flex space-x-3">
+						<div className="">
+							{wallet ? wallet : DEFAULT_WALLET}
+							{/* {targetAddress} */}
+						</div>
+						<div className="">
+							<Image
+								className="hover:cursor-pointer"
+								src="elements/copy_icon.svg"
+								alt="icon"
+								width={24}
+								height={24}
+							/>
+						</div>
+					</div>
+
+					<div className="flex space-x-10 mt-10 w-2/3">
+						<div className="">
+							<div className="text-gray-600">ETH BALANCE</div>
+
+							<div className="flex space-x-1 mt-2">
+								<div className="min-w-[32px]">
+									<Image
+										className="hover:cursor-pointer"
+										src="elements/eth.svg"
+										alt="icon"
+										width={32}
+										height={32}
+									/>
+								</div>{' '}
+								<div className="font-bold text-lg lg:text-2xl">
+									{balance ? balance : 7.2} ETH
+								</div>
 							</div>
 						</div>
 
-						<div className="flex space-x-10 mt-10 w-2/3">
-							<div className="">
-								<div className="text-gray-600">ETH BALANCE</div>
-
-								<div className="flex space-x-1 mt-2">
-									<div className="min-w-[32px]">
-										<Image
-											className="hover:cursor-pointer"
-											src="elements/eth.svg"
-											alt="icon"
-											width={32}
-											height={32}
-										/>
-									</div>{' '}
-									<div className="font-bold text-lg lg:text-2xl">{balance} ETH</div>
-								</div>
-							</div>
-
-							<div className="">
-								<div className="text-gray-600">ETH VALUE</div>
-								<div className="font-bold text-lg lg:text-2xl mt-2">
-									$7,036,330.26
-								</div>
-							</div>
+						<div className="">
+							<div className="text-gray-600">ETH VALUE</div>
+							<div className="font-bold text-lg lg:text-2xl mt-2">$7,036,330.26</div>
 						</div>
 					</div>
 				</div>
-			) : null}
+			</div>
 
 			{/* ---Card--- */}
 
