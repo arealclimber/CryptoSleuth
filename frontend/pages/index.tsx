@@ -145,7 +145,7 @@ const Home = () => {
 
 			// const data = await fetcher(`/api/proxy?address=${inputRef.current?.value}`);
 			const data = await fetcher(
-				`http://54.199.12.7:8070/wallet/transaction/history?address=${inputRef.current?.value}&time_range=${timeRange}&type=${searchType}
+				`${API_URL}/wallet/transaction/history?address=${inputRef.current?.value}&time_range=${timeRange}&type=${searchType}
 			`
 			);
 
@@ -154,7 +154,7 @@ const Home = () => {
 			// TODO: balance hasn't done yet
 			// FIXME: There's error calling http API request
 			const balanceData = await fetcher(
-				`http://54.199.12.7:8070/wallet/balance?address=${inputRef.current?.value}`
+				`${API_URL}/wallet/balance?address=${inputRef.current?.value}`
 			);
 
 			console.log('balance', balanceData);

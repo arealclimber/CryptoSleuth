@@ -1,6 +1,6 @@
 /**
  *
- * @param milleseconds
+ * @param milliseconds
  * @returns
  */
 export const wait = (ms: number): Promise<void> => {
