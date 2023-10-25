@@ -87,7 +87,7 @@ const Sidebar = () => {
 			<div
 				className={`fixed right-0 top-1/3 transform transition-transform duration-300 ${
 					show ? 'translate-x-[-30.4375rem]' : 'translate-x-0'
-				} z-80 `}
+				} z-70 `}
 			>
 				<button
 					className="text-white bg-blue-350 transition-all duration-300 font-medium rounded-tl-lg rounded-bl-lg text-base px-[1rem] py-[1.5rem]"

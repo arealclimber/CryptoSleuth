@@ -9,7 +9,7 @@ const InfoModal = ({visible, btnClickHandler}: IInfoModal) => {
 	return (
 		<>
 			{visible && (
-				<div className="fixed inset-0 z-40 flex bg-[#3C3C3C]/80 h-auto w-full items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+				<div className="fixed inset-0 z-90 flex bg-[#3C3C3C]/80 h-auto w-full items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
 					<div className="relative">
 						{' '}
 						<div
