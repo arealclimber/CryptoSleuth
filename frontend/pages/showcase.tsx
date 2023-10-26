@@ -43,6 +43,7 @@ import {
 	h,
 	w,
 } from '../config/config';
+import CashOutBall1 from '../components/CashOutBall1';
 
 const Showcase = () => {
 	const [
@@ -369,7 +370,7 @@ const Showcase = () => {
 							h={h}
 							title={DEFAULT_WALLET_1}
 							content={DEFAULT_WALLET_1}
-							remark="0.55 ETH / $19,463 "
+							remark="- 0.55 ETH / $19,463 "
 						/>
 					</div>
 
@@ -382,13 +383,46 @@ const Showcase = () => {
 					</div>
 
 					{/* 轉入的球 */}
-					<div className="ml-[4rem] mt-[20rem] z-0">
+					<div className="ml-[0rem] mt-[8rem] z-0">
 						<CashInBall
 							w={`w-[15rem]`}
 							h={`h-[15rem]`}
 							title={DEFAULT_WALLET_2}
 							content={DEFAULT_WALLET_2}
-							remark="0.55 ETH / $19,463 "
+							remark="+ 0.55 ETH / $19,463 "
+						/>
+					</div>
+
+					{/* 轉出的球 */}
+					<div className="-ml-[15rem] mt-[30rem] z-20">
+						<CashOutBall1
+							w={`w-[16rem]`}
+							h={`h-[16rem]`}
+							title={DEFAULT_WALLET_1}
+							content={DEFAULT_WALLET_1}
+							remark="- 0.55 ETH / $19,463 "
+						/>
+					</div>
+
+					{/* 轉入的球 */}
+					<div className="-ml-[58rem] mt-[32rem] z-0">
+						<CashInBall
+							w={`w-[12rem]`}
+							h={`h-[12rem]`}
+							title={DEFAULT_WALLET_1}
+							content={DEFAULT_WALLET_1}
+							remark="+ 0.12 ETH / $1,463 "
+						/>
+					</div>
+
+					{/* 轉出的球 */}
+					<div className="ml-[10rem] mt-[45rem] z-20">
+						<CashOutBall1
+							w={`w-[16rem]`}
+							h={`h-[16rem]`}
+							title={DEFAULT_WALLET_1}
+							content={DEFAULT_WALLET_1}
+							remark="+ 0.55 ETH / $19,463 "
 						/>
 					</div>
 				</div>
@@ -432,9 +466,16 @@ const Showcase = () => {
 
 			{/* ---Ball Section--- */}
 			{/* ---History Section--- */}
-			<div className=""></div>
-
+			<div className="mt-20 h-[600px] container justify-start">
+				<div className="text-primary-900 text-2xl font-bold">Search history</div>
+				<div className="text-gray-750 text-xs mt-3">
+					Displays the latest four query records. For more detailed records, please
+					see the menu on the right.
+				</div>
+				<div className=""></div>
+			</div>
 			{/* Footer */}
+
 			{/* <div className="bg-[#C1C1C1] h-[600px] mt-40"></div> */}
 		</div>
 	);

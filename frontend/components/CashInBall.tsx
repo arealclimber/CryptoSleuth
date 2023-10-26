@@ -60,7 +60,7 @@ const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
 		<div className={``}>
 			<InfoModal visible={visible} btnClickHandler={btnClickHandler} />
 			<div
-				className={`z-30 ${w} ${h} ${
+				className={`${w} ${h} ${
 					hoveredBall
 						? `cashInBallHoverBg cursor-pointer shadow-cashBallHover`
 						: `bg-white shadow-cashInGreen`

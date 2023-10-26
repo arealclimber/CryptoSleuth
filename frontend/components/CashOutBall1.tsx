@@ -10,7 +10,7 @@ interface ICashOutBall {
 	remark: string;
 }
 
-const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
+const CashOutBall1 = ({w, h, title, content, remark}: ICashOutBall) => {
 	const radius = w.split('-')[1];
 	console.log('radius', radius);
 
@@ -71,22 +71,22 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 				onMouseLeave={handler.mouseOutBall}
 			>
 				<div
-					className={`w-[19.25rem] h-[19.25rem] rounded-full ${
+					className={`w-[14.625rem] h-[14.625rem] rounded-full ${
 						hoveredBall ? `` : `border-2`
 					} border-blue-350 flex justify-center items-center`}
 				>
 					<div
-						className={`w-[17.875rem] h-[17.875rem] rounded-full ${
+						className={`w-[13.25rem] h-[13.25rem] rounded-full ${
 							hoveredBall ? `` : `border-2`
 						} border-blue-250 flex justify-center items-center`}
 					>
 						<div
-							className={`w-[16.84375rem] h-[16.84375rem] rounded-full ${
+							className={`w-[12.21875rem] h-[12.21875rem] rounded-full ${
 								hoveredBall ? `` : `border-2`
 							} border-blue-150 flex justify-center items-center`}
 						>
 							<div
-								className={`w-[16.15625rem] h-[16.15625rem] rounded-full ${
+								className={`w-[11.53125rem] h-[11.53125rem] rounded-full ${
 									hoveredBall ? `` : `border-2`
 								} border-blue-50 flex flex-col justify-center items-center`}
 							>
@@ -170,4 +170,4 @@ const CashOutBall = ({w, h, title, content, remark}: ICashOutBall) => {
 	);
 };
 
-export default CashOutBall;
+export default CashOutBall1;
