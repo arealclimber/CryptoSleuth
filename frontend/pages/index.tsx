@@ -36,6 +36,7 @@ import Sidebar from '../components/Sidebar';
 import {ethers} from 'ethers';
 import {getTimestamp, truncateString, weiToEth} from '../utils/common';
 import {h, w} from '../config/config';
+import axiosInstance from '../utils/axios';
 
 const Home = () => {
 	const [
@@ -117,7 +118,9 @@ const Home = () => {
 		let response;
 
 		try {
-			response = await axios(url, config);
+			// response = await axios(url, config);
+			response = await axiosInstance(url, config);
+
 			console.log('res', response.data);
 		} catch (err) {
 			console.error('error', err);
