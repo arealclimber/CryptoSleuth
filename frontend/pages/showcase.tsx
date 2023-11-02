@@ -44,6 +44,7 @@ import {
 	w,
 } from '../config/config';
 import CashOutBall1 from '../components/CashOutBall1';
+import CashOutBall2 from '../components/CashOutBall2';
 
 const Showcase = () => {
 	const [
@@ -468,11 +469,64 @@ const Showcase = () => {
 			{/* ---History Section--- */}
 			<div className="mt-20 h-[600px] container justify-start">
 				<div className="text-primary-900 text-2xl font-bold">Search history</div>
-				<div className="text-gray-750 text-xs mt-3">
+				<div className="text-gray-750 text-xs mt-3 mb-20">
 					Displays the latest four query records. For more detailed records, please
 					see the menu on the right.
 				</div>
-				<div className=""></div>
+				<div className="flex space-x-2 items-center">
+					<CashOutBall2
+						w={`w-[12rem]`}
+						h={`h-[12rem]`}
+						title={DEFAULT_WALLET_1}
+						content={DEFAULT_WALLET_1}
+						remark="+ 0.55 ETH / $19,463 "
+					/>
+					<div className="w-10 h-px bg-primary-900"></div>
+					<CashOutBall2
+						w={`w-[12rem]`}
+						h={`h-[12rem]`}
+						title={DEFAULT_WALLET_1}
+						content={DEFAULT_WALLET_1}
+						remark="+ 0.55 ETH / $19,463 "
+					/>
+					<div className="w-10 h-px bg-primary-900"></div>
+					<CashOutBall2
+						w={`w-[12rem]`}
+						h={`h-[12rem]`}
+						title={DEFAULT_WALLET_1}
+						content={DEFAULT_WALLET_1}
+						remark="+ 0.55 ETH / $19,463 "
+					/>
+
+					<div className="w-10 h-px bg-primary-900"></div>
+
+					<CashOutBall2
+						w={`w-[12rem]`}
+						h={`h-[12rem]`}
+						title={DEFAULT_WALLET_1}
+						content={DEFAULT_WALLET_1}
+						remark="+ 0.55 ETH / $19,463 "
+					/>
+
+					<div className="flex items-center pr-10">
+						<div className="w-10 h-px bg-primary-900"></div>
+						<svg
+							width="6"
+							height="6"
+							viewBox="0 0 10 10"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<polygon points="0,0 10,5 0,10" fill="#184B98" />
+						</svg>{' '}
+					</div>
+					<CashInBall
+						w={`w-[12rem]`}
+						h={`h-[12rem]`}
+						title={DEFAULT_WALLET_2}
+						content={DEFAULT_WALLET_2}
+						// remark="+ 0.55 ETH / $19,463 "
+					/>
+				</div>
 			</div>
 			{/* Footer */}
 

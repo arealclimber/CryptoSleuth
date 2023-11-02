@@ -7,7 +7,7 @@ interface ICashInBall {
 	h: string;
 	title: string;
 	content: string;
-	remark: string;
+	remark?: string;
 }
 
 const CashInBall = ({w, h, title, content, remark}: ICashInBall) => {
