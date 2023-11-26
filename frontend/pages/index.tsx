@@ -70,7 +70,11 @@ const Home = () => {
 	// const [timeRange, setTimeRange] = useState<TimeRange>(
 	// 	TimeRange.fiveMinutes
 	// );
-	const [toastVisible, setToastVisible] = useState(false);
+	// const [toastVisible, setToastVisible] = useState(false);
+	const [toastVisible, setToastVisible] = useGlobalStore(state => [
+		state.visibleToast,
+		state.setVisibleToast,
+	]);
 
 	const getTimeRange = (range: string) => {
 		const timeString = TimeString[range as keyof typeof TimeString];
@@ -103,9 +107,9 @@ const Home = () => {
 		}
 	};
 
-	const btnClickHandler = () => {
-		setToastVisible(false);
-	};
+	// const btnClickHandler = () => {
+	// 	setToastVisible(false);
+	// };
 
 	const validateAddress = (address: string): boolean => {
 		const valid = ethers.isAddress(address);
@@ -227,7 +231,7 @@ const Home = () => {
 			</div>
 
 			{/* <InfoModal visible={visible} btnClickHandler={btnClickHandler} /> */}
-			{wallet && <Toast visible={toastVisible} btnClickHandler={btnClickHandler} />}
+			{/* {wallet && <Toast visible={toastVisible} btnClickHandler={btnClickHandler} />} */}
 
 			<div className="w-full h-[400px] bg-[url('/elements/banner.svg')]">
 				<div className="flex flex-col justify-start space-y-6 items-center bg-cover bg-center container">
